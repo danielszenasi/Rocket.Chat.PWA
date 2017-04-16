@@ -69,10 +69,7 @@ export const getRoomCollectionLoaded = createSelector(getRoomCollectionState, fr
 export const getRoomCollectionLoading = createSelector(getRoomCollectionState, fromRoomCollection.getLoading);
 export const getRoomCollectionRoomIds = createSelector(getRoomCollectionState, fromRoomCollection.getIds);
 
-export const getRoomCollection = createSelector(getRoomEntities, getRoomCollectionRoomIds, (entities, ids) => {
-  console.log(70, "index.ts", entities, ids);
-  return ids.map(id => entities[id]);
-});
+export const getRoomCollection = createSelector(getRoomEntities, getRoomCollectionRoomIds, (entities, ids) => ids.map(id => entities[id]));
 
 export const isSelectedRoomInCollection = createSelector(getRoomCollectionRoomIds, getSelectedRoomId, (ids, selected) => {
   return ids.indexOf(selected) > -1;

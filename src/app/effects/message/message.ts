@@ -18,7 +18,6 @@ export class MessageEffects {
     .ofType(message.LOAD_HISTORY)
     .map((action: message.LoadHistoryAction) => action.payload)
     .switchMap((loadHistoryDTO: LoadHistoryDTO) => {
-    console.log(21, "message.ts", loadHistoryDTO);
       return this.roomService.loadHistory(loadHistoryDTO)
         .map((messages: Message[]) => new message.LoadHistoryCompleteAction(new RoomIdWithMessages(loadHistoryDTO.roomId, messages)))
         .catch(() => of()); // TODO action load failed

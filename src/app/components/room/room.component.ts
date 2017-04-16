@@ -17,18 +17,11 @@ export class RoomComponent {
 
   constructor(private store: Store<fromRoot.State>) {
     store.select(fromRoot.getSelectedRoom).subscribe(room => {
-      console.log(20, "room.component.ts", room);
       if(room){
         this.loadHistory(room);
       }
     });
     this.messages$ = store.select(fromRoot.getLoadHistoryComplete);
-
-
-    store.select(fromRoot.getSelectedRoomId).subscribe(id => {
-      console.log(20, "room.component.ts", id);
-      // this.loadHistory(room);
-    });
   }
 
   loadHistory(room: RoomSubscription) {

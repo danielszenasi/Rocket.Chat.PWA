@@ -29,7 +29,6 @@ export class SidenavComponent {
   }
 
   onRoomSelected(selectedRoom: RoomSubscription) {
-    console.log(32, "sidenav.component.ts", selectedRoom);
     this.store.dispatch(new room.SelectAction(selectedRoom.rid));
   }
 

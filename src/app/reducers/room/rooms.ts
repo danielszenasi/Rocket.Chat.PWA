@@ -21,7 +21,6 @@ export function reducer(state = initialState, action: room.Actions | collection.
   switch (action.type) {
     case room.SEARCH_COMPLETE:
     case collection.LOAD_SUCCESS: {
-      console.log(24, "rooms.ts", 'load-s');
       const rooms = action.payload;
       const newRooms = rooms.filter(room => !state.entities[room.rid]);
       const newRoomIds = newRooms.map(room => room.rid);
@@ -39,7 +38,6 @@ export function reducer(state = initialState, action: room.Actions | collection.
     }
 
     case room.LOAD: {
-      console.log(41, "rooms.ts", 'load');
       const room = action.payload;
 
       if (state.ids.indexOf(room.rid) > -1) {
@@ -56,8 +54,6 @@ export function reducer(state = initialState, action: room.Actions | collection.
     }
 
     case room.SELECT: {
-      console.log(57, "rooms.ts", action.payload);
-      console.log(58, "rooms.ts", state.selectedRoomId);
       return {
         ids: state.ids,
         entities: state.entities,
@@ -80,24 +76,13 @@ export function reducer(state = initialState, action: room.Actions | collection.
  * use-case.
  */
 
-export const getEntities = (state: State) => {
-  console.log(82, "rooms.ts", state);
-  return state.entities;
-}
+export const getEntities = (state: State) => state.entities;
 
 export const getIds = (state: State) => state.ids;
 
-export const getSelectedId = (state: State) => {
-  console.log(89, "rooms.ts", state);
-  return state.selectedRoomId;
-}
+export const getSelectedId = (state: State) => state.selectedRoomId;
 
-export const getSelected = createSelector(getEntities, getSelectedId, (entities, selectedId) => {
-  console.log(86, "rooms.ts", selectedId);
-  return entities[selectedId];
-});
 
-export const getAll = createSelector(getEntities, getIds, (entities, ids) => {
-  console.log(99, "rooms.ts", ids);
-  return ids.map(id => entities[id]);
-});
+export const getSelected = createSelector(getEntities, getSelectedId, (entities, selectedId) => entities[selectedId]);
+
+export const getAll = createSelector(getEntities, getIds, (entities, ids) => ids.map(id => entities[id]));

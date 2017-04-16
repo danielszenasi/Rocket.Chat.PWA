@@ -10,7 +10,6 @@ import {RCDDPClient} from '../api/rc-ddp-client';
 export class Authentication {
 
   constructor(private ddp: RCDDPClient) {
-    console.log('Hello Authentication Provider');
   }
 
   login(usernameWithPass: LoginUser) {

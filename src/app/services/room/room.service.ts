@@ -13,7 +13,6 @@ export class RoomService {
   }
 
   loadHistory(loadHistoryDTO: LoadHistoryDTO) {
-    console.log(16, "room.service.ts", loadHistoryDTO);
     return this.ddp.rpc('loadHistory', [
       loadHistoryDTO.roomId,
       loadHistoryDTO.timestamp,

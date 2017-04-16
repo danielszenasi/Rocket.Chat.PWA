@@ -20,7 +20,6 @@ export function reducer(state = initialState, action: message.Actions): State {
   switch (action.type) {
     case message.LOAD_HISTORY: {
       const loadHistoryDTO: LoadHistoryDTO = action.payload;
-      console.log(19, "message.ts", 'loadh');
       return Object.assign({}, state, {
         loading: true,
         selectedRoomId: loadHistoryDTO.roomId
@@ -29,7 +28,6 @@ export function reducer(state = initialState, action: message.Actions): State {
 
     case message.LOAD_HISTORY_COMPLETE: {
       const roomIdWithMessages = action.payload;
-      console.log(32, "message.ts", roomIdWithMessages);
       return {
         rids: [...state.rids, roomIdWithMessages.rid],
         entities: Object.assign({}, state.entities, {
