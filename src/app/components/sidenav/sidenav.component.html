@@ -1,0 +1,14 @@
+<md-tab-group>
+  <md-tab label="Users">
+    <md-nav-list>
+      <md-list-item *ngFor="let room of rooms$ | async"
+                    (click)="onRoomSelected(room)">
+        <md-icon svgIcon="avatars:{{room.avatar}}" class="avatar"></md-icon>
+        <span>{{room.name}}</span>
+      </md-list-item>
+    </md-nav-list>
+  </md-tab>
+  <md-tab label="Settings">
+    <span>Settings</span>
+  </md-tab>
+</md-tab-group>

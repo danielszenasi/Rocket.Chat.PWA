@@ -1,0 +1,22 @@
+<form (ngSubmit)="loginClicked()"
+      #loginForm="ngForm"
+      class="example-form">
+  <md-input-container class="example-full-width">
+    <input mdInput
+           [(ngModel)]="model.username"
+           name="username"
+           required
+           placeholder="Username">
+  </md-input-container>
+  <md-input-container class="example-full-width">
+    <input mdInput
+           [(ngModel)]="model.password"
+           name="password"
+           type="password"
+           required
+           placeholder="Password">
+  </md-input-container>
+  <button type="submit"
+          md-button
+          [disabled]="!loginForm.form.valid">Login</button>
+</form>
