@@ -7,7 +7,7 @@ export interface State {
   rids: string[];
   entities: { [rid: string]: Message[] };
   loaded: boolean;
-  loading: boolean;•
+  loading: boolean;
 }
 ;
 
