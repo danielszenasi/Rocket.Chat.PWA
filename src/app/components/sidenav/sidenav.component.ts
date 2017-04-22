@@ -21,7 +21,7 @@ export class SidenavComponent {
               sanitizer: DomSanitizer,
               private store: Store<fromRoot.State>) {
 
-    this.rooms$ = store.select(fromRoot.getRoomCollection);
+    this.rooms$ = store.select(fromRoot.getRooms);
     // To avoid XSS attacks, the URL needs to be trusted from inside of your application.
     // const avatarsSafeUrl = sanitizer.bypassSecurityTrustResourceUrl('./assets/avatars.svg');
 

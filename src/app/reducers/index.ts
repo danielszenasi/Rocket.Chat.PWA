@@ -8,7 +8,6 @@ import {combineReducers} from '@ngrx/store';
 
 import * as fromLogin from './login/authentication';
 import * as fromRooms from './room/rooms';
-import * as fromRoomCollection from './room/room-collection';
 import * as fromMessage from './message/message';
 // import * as fromLayout from './layout';
 
@@ -16,7 +15,6 @@ import * as fromMessage from './message/message';
 export interface State {
   login: fromLogin.State;
   rooms: fromRooms.State;
-  roomCollection: fromRoomCollection.State;
   // layout: fromLayout.State;
   router: fromRouter.RouterState;
   message: fromMessage.State;
@@ -25,7 +23,6 @@ export interface State {
 const reducers = {
   login: fromLogin.reducer,
   rooms: fromRooms.reducer,
-  roomCollection: fromRoomCollection.reducer,
   // layout: fromLayout.reducer,
   router: fromRouter.routerReducer,
   message: fromMessage.reducer
@@ -47,33 +44,12 @@ export const getRoomsState = (state: State) => state.rooms;
 
 export const getRoomEntities = createSelector(getRoomsState, fromRooms.getEntities);
 export const getRoomIds = createSelector(getRoomsState, fromRooms.getIds);
+export const getRoomLoaded = createSelector(getRoomsState, fromRooms.getLoaded);
+export const getRoomLoading = createSelector(getRoomsState, fromRooms.getLoading);
 export const getSelectedRoomId = createSelector(getRoomsState, fromRooms.getSelectedId);
 export const getSelectedRoom = createSelector(getRoomsState, fromRooms.getSelected);
+export const getRooms = createSelector(getRoomEntities, getRoomIds, (entities, ids) => ids.map(id => entities[id]));
 
-
-// export const getSearchState = (state: State) => state.search;
-//
-// export const getSearchBookIds = createSelector(getSearchState, fromSearch.getIds);
-// export const getSearchQuery = createSelector(getSearchState, fromSearch.getQuery);
-// export const getSearchLoading = createSelector(getSearchState, fromSearch.getLoading);
-//
-//
-// export const getSearchResults = createSelector(getBookEntities, getSearchBookIds, (books, searchIds) => {
-//   return searchIds.map(id => books[id]);
-// });
-
-
-export const getRoomCollectionState = (state: State) => state.roomCollection;
-
-export const getRoomCollectionLoaded = createSelector(getRoomCollectionState, fromRoomCollection.getLoaded);
-export const getRoomCollectionLoading = createSelector(getRoomCollectionState, fromRoomCollection.getLoading);
-export const getRoomCollectionRoomIds = createSelector(getRoomCollectionState, fromRoomCollection.getIds);
-
-export const getRoomCollection = createSelector(getRoomEntities, getRoomCollectionRoomIds, (entities, ids) => ids.map(id => entities[id]));
-
-export const isSelectedRoomInCollection = createSelector(getRoomCollectionRoomIds, getSelectedRoomId, (ids, selected) => {
-  return ids.indexOf(selected) > -1;
-});
 
 export const getLoginState = (state: State) => state.login;
 

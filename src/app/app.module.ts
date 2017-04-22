@@ -23,7 +23,6 @@ import {reducer} from './reducers';
 import {schema} from './db';
 
 import {RoomEffects} from './effects/room/room';
-import {RoomCollectionEffects} from './effects/room/room-collection';
 import {AuthenticationEffects} from './effects/login/authentication';
 
 import {MessageEffects} from './effects/message/message';
@@ -56,7 +55,6 @@ import {WebSocketService} from './services/ws/websocket.service';
 
     EffectsModule.run(AuthenticationEffects),
     EffectsModule.run(RoomEffects),
-    EffectsModule.run(RoomCollectionEffects),
     EffectsModule.run(MessageEffects),
 
     DBModule.provideDB(schema),
