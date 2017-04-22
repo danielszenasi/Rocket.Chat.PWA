@@ -17,7 +17,7 @@ export class RoomComponent {
 
   constructor(private store: Store<fromRoot.State>) {
     store.select(fromRoot.getSelectedRoom).subscribe(room => {
-      if(room){
+      if (room) {
         this.loadHistory(room);
       }
     });

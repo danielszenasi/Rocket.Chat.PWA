@@ -1,19 +1,20 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import * as sha256 from 'js-sha256';
-
 import {LoginUser} from '../../models/login-user.model';
-import {RCDDPClient} from '../api/rc-ddp-client';
+import {DDPService} from '../ws/ddp.service';
+import {DDPResponse} from '../../models/ddp-response.model';
 
 
 @Injectable()
 export class Authentication {
 
-  constructor(private ddp: RCDDPClient) {
+  constructor(private ddp: DDPService) {
+    console.log('Hello Authentication Provider');
   }
 
-  login(usernameWithPass: LoginUser) {
-    return this.ddp.rpc('login', [{
+  login(usernameWithPass: LoginUser): Observable<DDPResponse> {
+    return this.ddp.call('login', [{
       user: {
         email: usernameWithPass.username
       },

@@ -12,9 +12,9 @@ export class AuthenticationEffects {
     .ofType(login.LOGIN)
     .switchMap(action => this.auth.login(action.payload)
       // If successful, dispatch success action with result
-        .map((res: any) => ({type: login.LOGIN_SUCCESS, payload: res}))
+        .map((res: any) => new login.LoginSuccessAction(res))
         // If request fails, dispatch failed action
-        .catch((_error) => Observable.of({type: login.LOGIN_FAILED, payload: _error}))
+        .catch((_error) => Observable.of(new login.LoginFailedAction(_error)))
     );
 
   @Effect() logout$ = this.actions$

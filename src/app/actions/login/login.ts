@@ -31,49 +31,49 @@ export class LogoutAction implements Action {
 export class LoginSuccessAction implements Action {
   readonly type = LOGIN_SUCCESS;
 
-  constructor(public payload: string) {
+  constructor(public payload: any) {
   }
 }
 
 export class LoginFailedAction implements Action {
   readonly type = LOGIN_FAILED;
 
-  constructor(public payload: string) {
+  constructor(public payload: any) {
   }
 }
 
 export class CheckAuthAction implements Action {
   readonly type = CHECK_AUTH;
 
-  constructor(public payload: string) {
+  constructor(public payload: any) {
   }
 }
 
 export class LogoutSuccessAction implements Action {
   readonly type = LOGOUT_SUCCESS;
 
-  constructor(public payload: string) {
+  constructor(public payload: any) {
   }
 }
 
 export class LogoutFailedAction implements Action {
   readonly type = LOGOUT_FAILED;
 
-  constructor(public payload: string) {
+  constructor(public payload: any) {
   }
 }
 
 export class CheckAuthSuccessAction implements Action {
   readonly type = CHECK_AUTH_SUCCESS;
 
-  constructor(public payload: string) {
+  constructor(public payload: any) {
   }
 }
 
 export class CheckAuthFailedAction implements Action {
   readonly type = CHECK_AUTH_FAILED;
 
-  constructor(public payload: string) {
+  constructor(public payload: any) {
   }
 }
 

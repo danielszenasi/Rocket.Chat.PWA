@@ -6,7 +6,7 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/toArray';
 import {Injectable} from '@angular/core';
 import {Action} from '@ngrx/store';
-import {Effect, Actions} from '@ngrx/effects';
+import {Actions, Effect} from '@ngrx/effects';
 import {Database} from '@ngrx/db';
 import {Observable} from 'rxjs/Observable';
 import {defer} from 'rxjs/observable/defer';
@@ -20,16 +20,6 @@ import {RoomSubscription} from '../../models/ddp/room-subscription.model';
 @Injectable()
 export class RoomCollectionEffects {
 
-  /**
-   * This effect does not yield any actions back to the store. Set
-   * `dispatch` to false to hint to @ngrx/effects that it should
-   * ignore any elements of this effect stream.
-   *
-   * The `defer` observable accepts an observable factory function
-   * that is called when the observable is subscribed to.
-   * Wrapping the database open call in `defer` makes
-   * effect easier to test.
-   */
   @Effect({dispatch: false})
   openDB$: Observable<any> = defer(() => {
     return this.db.open('rooms_app');

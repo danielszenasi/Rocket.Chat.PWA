@@ -4,7 +4,8 @@ export interface State {
   loaded: boolean;
   loading: boolean;
   ids: string[];
-};
+}
+;
 
 const initialState: State = {
   loaded: false,
@@ -30,7 +31,6 @@ export function reducer(state = initialState, action: roomCollection.Actions): S
       };
     }
 
-    case roomCollection.ADD_ROOM_SUCCESS:
     case roomCollection.REMOVE_ROOM_FAIL: {
       const roomSubscription = action.payload;
 
@@ -39,12 +39,11 @@ export function reducer(state = initialState, action: roomCollection.Actions): S
       }
 
       return Object.assign({}, state, {
-        ids: [ ...state.ids, roomSubscription.rid ]
+        ids: [...state.ids, roomSubscription.rid]
       });
     }
 
-    case roomCollection.REMOVE_ROOM_SUCCESS:
-    case roomCollection.ADD_ROOM_FAIL: {
+    case roomCollection.REMOVE_ROOM_SUCCESS: {
       const roomSubscription = action.payload;
 
       return Object.assign({}, state, {

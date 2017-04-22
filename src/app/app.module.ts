@@ -6,7 +6,7 @@ import {ComponentsModule} from './components/index';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CommonModule} from '@angular/common';
 import {RoomService} from './services/room/room.service';
-import {RCDDPClient} from './services/api/rc-ddp-client';
+
 import {Authentication} from './services/login/authentication';
 
 import {StoreModule} from '@ngrx/store';
@@ -25,8 +25,11 @@ import {schema} from './db';
 import {RoomEffects} from './effects/room/room';
 import {RoomCollectionEffects} from './effects/room/room-collection';
 import {AuthenticationEffects} from './effects/login/authentication';
-import {Hostname} from 'app/models/hostname.model';
-import {MessageEffects} from "./effects/message/message";
+
+import {MessageEffects} from './effects/message/message';
+import {DDPClientSettings} from './models/DDPClientSettings';
+import {DDPService} from './services/ws/ddp.service';
+import {WebSocketService} from './services/ws/websocket.service';
 
 @NgModule({
   declarations: [
@@ -59,11 +62,20 @@ import {MessageEffects} from "./effects/message/message";
     DBModule.provideDB(schema),
   ],
   providers: [
-    RCDDPClient,
+    DDPService,
     Authentication,
     RoomService,
-
-    {provide: Hostname, useValue: {value: 'demo.rocket.chat'}}
+    WebSocketService,
+    {
+      provide: DDPClientSettings, useValue: {
+      host: 'demo.rocket.chat',
+      path: 'websocket',
+      ssl: true,
+      ddpVersion: '1',
+      pingInterval: 30000,
+      reconnectInterval: 30000,
+    }
+    }
   ],
   bootstrap: [AppComponent]
 })
