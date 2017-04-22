@@ -1,40 +1,48 @@
 import {Message} from '../../models/ddp/message.model';
 import * as message from '../../actions/message/message';
-import {createSelector} from 'reselect';
-import {LoadHistoryDTO} from "../../models/dto/load-history-dto.model";
+import {LoadHistoryDTO} from '../../models/dto/load-history-dto.model';
+import {MessageWithId} from '../../models/message-with-id.model';
 
 export interface State {
   rids: string[];
   entities: { [rid: string]: Message[] };
-  selectedRoomId: string | null;
+  loaded: boolean;
+  loading: boolean;•
 }
 ;
 
 export const initialState: State = {
   rids: [],
   entities: {},
-  selectedRoomId: null,
+  loaded: false,
+  loading: false,
 };
 
 export function reducer(state = initialState, action: message.Actions): State {
   switch (action.type) {
+
+    case message.LOAD: {
+      return Object.assign({}, state, {
+        loading: true
+      });
+    }
+
     case message.LOAD_HISTORY: {
       const loadHistoryDTO: LoadHistoryDTO = action.payload;
       return Object.assign({}, state, {
         loading: true,
-        selectedRoomId: loadHistoryDTO.roomId
       });
     }
 
     case message.LOAD_HISTORY_COMPLETE: {
-      const roomIdWithMessages = action.payload;
+      const messageWithRoomId: MessageWithId = action.payload;
       return {
-        rids: [...state.rids, roomIdWithMessages.rid],
-        entities: Object.assign({}, state.entities, {
-          [roomIdWithMessages.rid]: roomIdWithMessages.messages
-        }),
-        selectedRoomId: state.selectedRoomId
+        rids: state.rids,
+        entities: Object.assign({}, state.entities, {[messageWithRoomId.rid]: messageWithRoomId.messages}),
+        loading: false,
+        loaded: state.loaded
       };
+
     }
 
 
@@ -45,7 +53,3 @@ export function reducer(state = initialState, action: message.Actions): State {
 }
 
 export const getEntites = (state: State) => state.entities;
-
-export const getSelectedId = (state: State) => state.selectedRoomId;
-
-export const getLoadHistoryComplete = createSelector(getEntites, getSelectedId, (entities, id) => entities[id]);

@@ -16,9 +16,8 @@ import {RouterStoreModule} from '@ngrx/router-store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {FlexLayoutModule} from '@angular/flex-layout';
 
-import {MdToolbarModule, MdSidenavModule, MdMenuModule, MdIconModule, MdButtonModule} from '@angular/material';
+import {MdButtonModule, MdIconModule, MdMenuModule, MdSidenavModule, MdToolbarModule} from '@angular/material';
 
-// import effects
 import {reducer} from './reducers';
 import {schema} from './db';
 
@@ -66,7 +65,7 @@ import {WebSocketService} from './services/ws/websocket.service';
     WebSocketService,
     {
       provide: DDPClientSettings, useValue: {
-      host: 'demo.rocket.chat',
+      host: 'chat.innodev.info',
       path: 'websocket',
       ssl: true,
       ddpVersion: '1',

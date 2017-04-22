@@ -6,9 +6,13 @@ import { DBSchema } from '@ngrx/db';
  */
 export const schema: DBSchema = {
   version: 1,
-  name: 'rooms_app',
+  name: 'rocket_chat_app',
   stores: {
     rooms: {
+      autoIncrement: true,
+      primaryKey: 'rid'
+    },
+    messages: {
       autoIncrement: true,
       primaryKey: 'rid'
     }

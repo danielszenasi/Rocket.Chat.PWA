@@ -24,7 +24,7 @@ export class RoomEffects {
 
   @Effect({dispatch: false})
   openDB$: Observable<any> = defer(() => {
-    return this.db.open('rooms_app');
+    return this.db.open('rocket_chat_app');
   });
 
   @Effect()
