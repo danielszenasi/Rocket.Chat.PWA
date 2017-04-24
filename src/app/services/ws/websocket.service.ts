@@ -38,6 +38,7 @@ export class WebSocketService {
     const observer = {
       next: (data: string) => {
         if (ws.readyState === WebSocket.OPEN) {
+          console.log(41, "websocket.service.ts", data);
           ws.send(EJSON.stringify(data));
         }
       },

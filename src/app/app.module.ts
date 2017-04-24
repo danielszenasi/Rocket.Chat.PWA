@@ -28,6 +28,8 @@ import {MessageEffects} from './effects/message/message';
 import {DDPClientSettings} from './models/DDPClientSettings';
 import {DDPService} from './services/ws/ddp.service';
 import {WebSocketService} from './services/ws/websocket.service';
+import {SendMessageService} from "./services/message/send-message.service";
+import {RCCollectionService} from "./services/ws/rc-collection.service";
 
 @NgModule({
   declarations: [
@@ -62,10 +64,12 @@ import {WebSocketService} from './services/ws/websocket.service';
     DDPService,
     Authentication,
     RoomService,
+    SendMessageService,
+    RCCollectionService,
     WebSocketService,
     {
       provide: DDPClientSettings, useValue: {
-      host: 'chat.innodev.info',
+      host: 'demo.rocket.chat',
       path: 'websocket',
       ssl: true,
       ddpVersion: '1',

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Router} from '@angular/router';
 
@@ -6,10 +6,12 @@ import {LoginUser} from '../../models/login-user.model';
 import * as login from '../../actions/login/login';
 import * as rooms from '../../actions/room/room';
 import * as fromRoot from '../../reducers';
+import * as sha256 from 'js-sha256';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent {
 
@@ -53,7 +55,15 @@ export class LoginComponent {
   // }
 
   loginClicked() {
-    this.store.dispatch(new login.LoginAction(new LoginUser(this.model.username, this.model.password)));
+    this.store.dispatch(new login.LoginAction({
+      user: {
+        email: this.model.username
+      },
+      password: {
+        digest: sha256(this.model.password),
+        algorithm: 'sha-256'
+      }
+    }));
 
   }
 }

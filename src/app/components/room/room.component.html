@@ -1,12 +1,11 @@
-<md-list>
-  <h3 md-subheader>Messages</h3>
-  <md-list-item *ngFor="let message of messages$ | async">
-    <h4 md-line>{{message.u.username}}</h4>
-    <p md-line> {{message.msg}} </p>
-  </md-list-item>
-</md-list>
+<div class="room" fxLayout="column">
+<md-list fxFlex="90">
+    <h3 md-subheader>Messages</h3>
+    <md-list-item *ngFor="let message of messages$ | async">
+      <h4 md-line>{{message.u.username}}</h4>
+      <p md-line> {{message.msg}} </p>
+    </md-list-item>
+  </md-list>
+  <app-edit-message fxFlex="10"></app-edit-message>
+</div>
 
-<!--<md-card fxFlex fxLayout="column" fxLayoutGap="14px">-->
-  <!--<md-slide-toggle>Is Admin?</md-slide-toggle>-->
-  <!--<md-slide-toggle>Is Cool?</md-slide-toggle>-->
-<!--</md-card>-->

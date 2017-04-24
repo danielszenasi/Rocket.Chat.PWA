@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {Store} from '@ngrx/store';
 import * as message from '../../actions/message/message';
 import * as fromRoot from '../../reducers';
@@ -10,7 +10,9 @@ import {Message} from "../../models/ddp/message.model";
 
 @Component({
   selector: 'app-room',
-  templateUrl: './room.component.html'
+  templateUrl: './room.component.html',
+  styleUrls: ['./room.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoomComponent {
   messages$: Observable<Message[]>;

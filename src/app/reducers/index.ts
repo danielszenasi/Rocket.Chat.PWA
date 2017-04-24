@@ -57,8 +57,19 @@ export const getLoginSuccess = createSelector(getLoginState, fromLogin.getLoginS
 
 export const getMessageState = (state: State) => state.message;
 export const getMessageEntities = createSelector(getMessageState, fromMessage.getEntites);
+export const getMessageIds = createSelector(getMessageState, fromMessage.getIds);
 
-export const getLoadHistoryComplete = createSelector(getMessageEntities, getSelectedRoomId, (entities, id) => entities[id] );
+export const getMessages = createSelector(getMessageEntities, getSelectedRoomId, (entities, id) => entities[id]);
+export const getMessageId = createSelector(getMessageIds, getSelectedRoomId, (ids, id) => ids[id]);
+
+export const getLoadHistoryComplete = createSelector(getMessages, getMessageId, (entities, ids) => {
+  if (ids) {
+    const res =  ids.map(id => entities[id]);
+    return res;
+  }
+  return [];
+});
+
 
 /**
  * Layout Reducers

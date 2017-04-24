@@ -5,6 +5,7 @@ import {DDPResponse} from '../../models/ddp-response.model';
 import {Observer} from 'rxjs/Observer';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
+import {RCCollectionService} from "./rc-collection.service";
 
 // TODO add types
 @Injectable()
@@ -25,7 +26,9 @@ export class DDPService {
 
   public ddpSubject: Subject<DDPResponse>;
 
-  constructor(private wsService: WebSocketService, ddpSettings: DDPClientSettings) {
+  constructor(private wsService: WebSocketService,
+              ddpSettings: DDPClientSettings,
+              private rcCollectionService: RCCollectionService) {
     this.nextId = 0;
     this.subjects = {};
 
@@ -52,21 +55,19 @@ export class DDPService {
   }
 
   onError() {
+    console.log(55, "ddp.service.ts", 'error');
     // TODO handle error
   }
 
   onClose() {
+    console.log(60, "ddp.service.ts", 'close');
     // TODO handle close
   }
 
-  public call(name: string, params: any[], msg: string = 'method'): Observable<any> {
+  public callWithObj(obj: any): Observable<any> {
     const id = this.getNextId();
-    this.ddpSubject.next({
-      msg: msg,
-      id: id.toString(),
-      method: name,
-      params: params
-    });
+    obj.id = id.toString();
+    this.ddpSubject.next(obj);
 
     if (!this.subjects[id]) {
       this.subjects[id] = new Subject<any>();
@@ -79,7 +80,8 @@ export class DDPService {
   }
 
   send(msg: string, id?: number) {
-    const data = id ? {msg: msg, id: id.toString()} : {msg: name};
+    console.log(84, "ddp.service.ts", msg, id);
+    const data = id ? {msg: msg, id: id.toString()} : {msg: msg};
     this.ddpSubject.next(data);
   }
 
@@ -91,8 +93,20 @@ export class DDPService {
     this.send('unsub');
   }
 
-  public subscribe(name: string, params: any[], handler: Observer<any>): Observable<any> {
-    return this.call(name, params, 'sub');
+  public call(name: string, params: any[]): Observable<any> {
+    return this.callWithObj({
+      msg: 'method',
+      method: name,
+      params: params
+    });
+  }
+
+  public subscribe(name: string, params: any[]): Observable<any> {
+    return this.callWithObj({
+      msg: 'sub',
+      name: name,
+      params: params
+    });
   }
 
   private message(data: DDPResponse) {
@@ -107,6 +121,7 @@ export class DDPService {
 
       // method result
       case 'result':
+        console.log(121, "ddp.service.ts", data);
         subject = this.subjects[data.id];
 
         if (subject) {
@@ -132,7 +147,8 @@ export class DDPService {
 
 
       case 'ping':
-        this.send('pong', Number(data.id));
+        console.log(138, "ddp.service.ts", data.id);
+        this.send('pong');
         break;
       // server respond to my ping
       case 'pong':
@@ -147,16 +163,18 @@ export class DDPService {
         break;
       // Error
       case 'error':
-        console.warn('DDP error', data.error, data.reason);
+        console.warn('DDP error', data, data.id, data.error, data.reason);
         break;
 
       // // add document to collection
       // case 'added':
       // // remove document from collection
       // case 'removed':
-      // // change document in collection
-      // case 'changed':
 
+      case 'changed':
+        console.log(171, "ddp.service.ts", data);
+        this.rcCollectionService.changed(data);
+        break;
       default:
         console.warn('DDP cannot handle this message', data);
         break;

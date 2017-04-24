@@ -17,7 +17,7 @@ export const CHECK_AUTH_SUCCESS_NO_USER = '[LOGIN] check auth success no user';
 export class LoginAction implements Action {
   readonly type = LOGIN;
 
-  constructor(public payload: LoginUser) {
+  constructor(public payload: any) {
   }
 }
 

@@ -1,7 +1,5 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import * as sha256 from 'js-sha256';
-import {LoginUser} from '../../models/login-user.model';
 import {DDPService} from '../ws/ddp.service';
 import {DDPResponse} from '../../models/ddp-response.model';
 
@@ -13,16 +11,8 @@ export class Authentication {
     console.log('Hello Authentication Provider');
   }
 
-  login(usernameWithPass: LoginUser): Observable<DDPResponse> {
-    return this.ddp.call('login', [{
-      user: {
-        email: usernameWithPass.username
-      },
-      password: {
-        digest: sha256(usernameWithPass.password),
-        algorithm: 'sha-256'
-      }
-    }]);
+  login(cred: any): Observable<DDPResponse> {
+    return this.ddp.call('login', [cred]);
   }
 
 

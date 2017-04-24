@@ -10,6 +10,7 @@ import {RoomService} from '../../services/room/room.service';
 import {defer} from 'rxjs/observable/defer';
 import {Database} from '@ngrx/db';
 import {MessageWithId} from '../../models/message-with-id.model';
+import {NewMessage} from "../../models/new-message.model";
 
 @Injectable()
 export class MessageEffects {
@@ -25,7 +26,7 @@ export class MessageEffects {
     .map((action: message.LoadHistoryAction) => action.payload)
     .switchMap((loadHistoryDTO: LoadHistoryDTO) => {
       return this.roomService.loadHistory(loadHistoryDTO)
-        .map((messages: Message[]) => new message.LoadHistoryCompleteAction(new MessageWithId(loadHistoryDTO.roomId, messages)))
+        .map((messages: Message[]) => new message.LoadHistoryCompleteAction([new MessageWithId(loadHistoryDTO.roomId, messages)]))
         .catch(() => of()); // TODO action load failed
     });
 
@@ -37,8 +38,7 @@ export class MessageEffects {
       this.db.query('messages')
         .toArray()
         .map((messages) => {
-          console.log(39, 'message.ts', messages);
-          return new message.LoadCompleteAction({['asd']: messages});
+          return new message.LoadCompleteAction(messages);
         })
         .catch(error => of()) // TODO action load failed
     );
@@ -47,11 +47,21 @@ export class MessageEffects {
   addRoomToCollection$: Observable<Action> = this.actions$
     .ofType(message.LOAD_HISTORY_COMPLETE)
     .map((action: message.LoadHistoryCompleteAction) => action.payload)
-    .mergeMap((messages: MessageWithId) =>
-      this.db.insert('messages', [messages])
-        .map(() => new message.LoadCompleteAction({[messages.rid]: messages.messages}))
-        .catch(() => of(new message.LoadFailAction({[messages.rid]: messages.messages})))
+    .mergeMap((messages: MessageWithId[]) =>
+      this.db.insert('messages', messages)
+        .map(() => new message.LoadCompleteAction([])) // TODO need other action
+        .catch(() => of(new message.LoadFailAction(messages)))
     );
+
+  @Effect()
+  sendMessage$: Observable<Action> = this.actions$
+    .ofType(message.SEND_MESSAGE)
+    .map((action: message.SendMessageAction) => action.payload)
+    .switchMap((newMessage: NewMessage) => {
+      return this.roomService.sendMessage(newMessage)
+        .map((messages: Message) => new message.SendMessageCompleteAction(messages))
+        .catch(() => of(new message.SendMessageFailAction(newMessage)));
+    });
 
   constructor(private actions$: Actions, private db: Database, private roomService: RoomService) {
   }
