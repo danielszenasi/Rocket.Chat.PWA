@@ -14,7 +14,7 @@ export const schema: DBSchema = {
     },
     messages: {
       autoIncrement: true,
-      primaryKey: 'rid'
+      primaryKey: '_id'
     }
   }
 };

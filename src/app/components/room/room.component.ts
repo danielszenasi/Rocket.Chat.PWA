@@ -23,7 +23,7 @@ export class RoomComponent {
         this.loadHistory(room);
       }
     });
-    this.messages$ = store.select(fromRoot.getLoadHistoryComplete);
+   this.messages$ = store.select(fromRoot.getLoadHistoryComplete);
   }
 
   loadHistory(room: RoomSubscription) {

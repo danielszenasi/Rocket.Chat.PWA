@@ -1,16 +1,16 @@
 import {LoadHistoryDTO} from '../../models/dto/load-history-dto.model';
 import {Message} from '../../models/ddp/message.model';
-import {Effect, Actions, toPayload} from '@ngrx/effects';
+import {Effect, Actions} from '@ngrx/effects';
 import {Action} from '@ngrx/store';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
+import {from} from 'rxjs/observable/from';
 import {Injectable} from '@angular/core';
 import * as message from '../../actions/message/message';
 import {RoomService} from '../../services/room/room.service';
 import {defer} from 'rxjs/observable/defer';
 import {Database} from '@ngrx/db';
-import {MessageWithId} from '../../models/message-with-id.model';
-import {NewMessage} from "../../models/new-message.model";
+import {NewMessage} from '../../models/new-message.model';
 
 @Injectable()
 export class MessageEffects {
@@ -26,31 +26,30 @@ export class MessageEffects {
     .map((action: message.LoadHistoryAction) => action.payload)
     .switchMap((loadHistoryDTO: LoadHistoryDTO) => {
       return this.roomService.loadHistory(loadHistoryDTO)
-        .map((messages: Message[]) => new message.LoadHistoryCompleteAction([new MessageWithId(loadHistoryDTO.roomId, messages)]))
-        .catch(() => of()); // TODO action load failed
-    });
+        .catch(() => of(new message.LoadHistoryCompleteAction([])));
+    }).mergeMap((messages: Message[]) => from([new message.LoadHistoryCompleteAction(messages), new message.StoreMessageAction(messages)]));
 
   @Effect()
-  loadCollection$: Observable<Action> = this.actions$
+  load$: Observable<Action> = this.actions$
     .ofType(message.LOAD)
     .startWith(new message.LoadAction())
     .switchMap(() =>
       this.db.query('messages')
         .toArray()
         .map((messages) => {
-          return new message.LoadCompleteAction(messages);
+          return new message.LoadSuccessAction(messages);
         })
-        .catch(error => of()) // TODO action load failed
+        .catch(error => of(new message.LoadFailAction(error)))
     );
 
   @Effect()
-  addRoomToCollection$: Observable<Action> = this.actions$
-    .ofType(message.LOAD_HISTORY_COMPLETE)
+  storeMessage$: Observable<Action> = this.actions$
+    .ofType(message.STORE_MESSAGE)
     .map((action: message.LoadHistoryCompleteAction) => action.payload)
-    .mergeMap((messages: MessageWithId[]) =>
+    .mergeMap((messages: Message[]) =>
       this.db.insert('messages', messages)
-        .map(() => new message.LoadCompleteAction([])) // TODO need other action
-        .catch(() => of(new message.LoadFailAction(messages)))
+        .map(() => new message.StoreMessageSuccessAction(messages))
+        .catch(() => of(new message.StoreMessageFailAction(messages)))
     );
 
   @Effect()
@@ -59,7 +58,7 @@ export class MessageEffects {
     .map((action: message.SendMessageAction) => action.payload)
     .switchMap((newMessage: NewMessage) => {
       return this.roomService.sendMessage(newMessage)
-        .map((messages: Message) => new message.SendMessageCompleteAction(messages))
+        .map((messages: Message) => new message.SendMessageSuccessAction(messages))
         .catch(() => of(new message.SendMessageFailAction(newMessage)));
     });
 

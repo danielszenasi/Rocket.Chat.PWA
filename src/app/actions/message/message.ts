@@ -1,18 +1,45 @@
 import {LoadHistoryDTO} from '../../models/dto/load-history-dto.model';
 import {Action} from '@ngrx/store';
-import {MessageWithId} from '../../models/message-with-id.model';
 import {NewMessage} from '../../models/new-message.model';
 import {Message} from '../../models/ddp/message.model';
 
 export const LOAD = '[Message] Load ';
-export const LOAD_COMPLETE = '[Message] Load  Complete';
+export const LOAD_SUCCESS = '[Message] Load  Success';
 export const LOAD_FAIL = '[Message] Load  Fail';
+
 export const LOAD_HISTORY = '[Message] Load history';
 export const LOAD_HISTORY_COMPLETE = '[Message] Load history Complete';
+
 export const SEND_MESSAGE = '[Message] Send Message';
-export const SEND_MESSAGE_COMPLETE = '[Message] Send Message Complete';
-export const SEND_MESSAGE_FAIL = '[Message] Send Message Complete';
-export const ADD_MESSAGE = '[Message] Add Message Complete';
+export const SEND_MESSAGE_SUCCESS = '[Message] Send Message Success';
+export const SEND_MESSAGE_FAIL = '[Message] Send Message Fail';
+
+export const ADD_MESSAGE = '[Message] Add Message';
+
+export const STORE_MESSAGE = '[Message] Store Message';
+export const STORE_MESSAGE_SUCCESS = '[Message] Store Message Success';
+export const STORE_MESSAGE_FAIL = '[Message] Store Message Fail';
+
+export class LoadAction implements Action {
+  readonly type = LOAD;
+
+  constructor() {
+  }
+}
+
+export class LoadSuccessAction implements Action {
+  readonly type = LOAD_SUCCESS;
+
+  constructor(public payload: Message[]) {
+  }
+}
+
+export class LoadFailAction implements Action {
+  readonly type = LOAD_FAIL;
+
+  constructor(public payload: any) {
+  }
+}
 
 export class LoadHistoryAction implements Action {
   readonly type = LOAD_HISTORY;
@@ -24,30 +51,10 @@ export class LoadHistoryAction implements Action {
 export class LoadHistoryCompleteAction implements Action {
   readonly type = LOAD_HISTORY_COMPLETE;
 
-  constructor(public payload: MessageWithId[]) {
+  constructor(public payload: Message[]) {
   }
 }
 
-export class LoadAction implements Action {
-  readonly type = LOAD;
-
-  constructor() {
-  }
-}
-
-export class LoadCompleteAction implements Action {
-  readonly type = LOAD_COMPLETE;
-
-  constructor(public payload: MessageWithId[]) {
-  }
-}
-
-export class LoadFailAction implements Action {
-  readonly type = LOAD_FAIL;
-
-  constructor(public payload: MessageWithId[]) {
-  }
-}
 
 export class SendMessageAction implements Action {
   readonly type = SEND_MESSAGE;
@@ -56,8 +63,8 @@ export class SendMessageAction implements Action {
   }
 }
 
-export class SendMessageCompleteAction implements Action {
-  readonly type = SEND_MESSAGE_COMPLETE;
+export class SendMessageSuccessAction implements Action {
+  readonly type = SEND_MESSAGE_SUCCESS;
 
   constructor(public payload: Message) {
   }
@@ -77,13 +84,37 @@ export class AddMessageAction implements Action {
   }
 }
 
+export class StoreMessageAction implements Action {
+  readonly type = STORE_MESSAGE;
+
+  constructor(public payload: Message[]) {
+  }
+}
+
+export class StoreMessageSuccessAction implements Action {
+  readonly type = STORE_MESSAGE_SUCCESS;
+
+  constructor(public payload: Message[]) {
+  }
+}
+
+export class StoreMessageFailAction implements Action {
+  readonly type = STORE_MESSAGE_FAIL;
+
+  constructor(public payload: Message[]) {
+  }
+}
+
 export type Actions
-  = LoadHistoryAction
-  | LoadAction
-  | LoadCompleteAction
+  = LoadAction
+  | LoadSuccessAction
   | LoadFailAction
+  | LoadHistoryAction
   | LoadHistoryCompleteAction
   | SendMessageAction
-  | SendMessageCompleteAction
+  | SendMessageSuccessAction
   | SendMessageFailAction
-  | AddMessageAction;
+  | AddMessageAction
+  | StoreMessageAction
+  | StoreMessageSuccessAction
+  | StoreMessageFailAction;

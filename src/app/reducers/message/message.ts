@@ -6,11 +6,11 @@ import {NewMessage} from '../../models/new-message.model';
 
 export interface State {
   rids: string[];
-  entities: { [rid: string]: { [_id: string]: Message } };
+  entities: { [_id: string]: Message };
   ids: { [rid: string]: string[] }; // order is important
   loaded: boolean;
   loading: boolean;
-  messagesState: { [id: string]: { [_id: string]: MessageState } };
+  messagesState: { [_id: string]: MessageState };
 }
 ;
 
@@ -39,54 +39,46 @@ export function reducer(state = initialState, action: message.Actions): State {
     }
 
     case message.LOAD_HISTORY: {
-      const loadHistoryDTO: LoadHistoryDTO = action.payload;
+      // const loadHistoryDTO: LoadHistoryDTO = action.payload;
       return Object.assign({}, state, {
         loading: true,
       });
     }
 
-    case message.LOAD_COMPLETE:
+    case message.LOAD_SUCCESS:
     case message.LOAD_HISTORY_COMPLETE: {
-      const messages: MessageWithId[] = action.payload;
-      let roomEntities = state.entities;
-      let roomIds = state.rids;
-      let messageIds = state.ids;
-      messages.forEach((messageWithRoomId: MessageWithId) => {
+      const messages: Message[] = action.payload;
+      console.log(51, "message.ts", messages);
+      const newMessages = messages.filter(message => !state.entities[message._id]);
+      console.log(53, "message.ts", newMessages);
+      const newMessageIds = newMessages.reduceRight((ids: { [rid: string]: string[] }, message: Message) => {
+        const oldMessageIds = state.rids[message.rid] ? state.rids[message.rid] : [];
+        const addedMessageIds = ids[message.rid] ? ids[message.rid] : [];
 
-        let storedMessages = state.entities[messageWithRoomId.rid] ? state.entities[messageWithRoomId.rid] : {};
-        let storedMessagIds = state.ids[messageWithRoomId.rid] ? state.ids[messageWithRoomId.rid] : [];
+        return Object.assign(ids, {
+          [message.rid]: [...oldMessageIds, ...addedMessageIds, message._id]
+        });
+      }, {});
+      console.log(58, "message.ts", newMessageIds);
 
+      const newMessageEntities = newMessages.reduce((entities: { [id: string]: Message }, message: Message) => {
+        return Object.assign(entities, {
+          [message._id]: message
+        });
+      }, {});
 
-        const newMessages = storedMessages ?
-          messageWithRoomId.messages.filter(message => !state.entities[message.rid]) :
-          messageWithRoomId.messages;
+      const newRoomIds = Object.keys(newMessageIds).filter((rid: string) => !state.rids[rid]);
 
-        const newMessageIds = newMessages.reverse().map(message => message._id);
-        const newMessageEntities = newMessages.reduce((entities: { [id: string]: Message }, message: Message) => {
-          return Object.assign(entities, {
-            [message._id]: message
-          });
-        }, {});
-
-        storedMessages = Object.assign({}, storedMessages, newMessageEntities);
-        storedMessagIds = [...storedMessagIds, ...newMessageIds];
-
-        messageIds = Object.assign({}, messageIds, {[messageWithRoomId.rid]: storedMessagIds});
-        roomEntities = Object.assign({}, roomEntities, {[messageWithRoomId.rid]: storedMessages});
-
-        if (!state.entities[messageWithRoomId.rid]) {
-          roomIds = [...roomIds, messageWithRoomId.rid];
-        }
-      });
       return {
-        rids: [...state.rids, ...roomIds],
-        ids: Object.assign({}, state.ids, messageIds),
-        entities: Object.assign({}, state.entities, roomEntities),
+        rids: [...state.rids, ...newRoomIds],
+        ids: Object.assign({}, state.ids, newMessageIds),
+        entities: Object.assign({}, state.entities, newMessageEntities),
         loading: false,
         loaded: true,
         messagesState: state.messagesState
       };
     }
+
     case message.ADD_MESSAGE:
     case message.SEND_MESSAGE: {
       const message: NewMessage = action.payload;
@@ -107,7 +99,7 @@ export function reducer(state = initialState, action: message.Actions): State {
       };
     }
     case
-    message.SEND_MESSAGE_COMPLETE: {
+    message.SEND_MESSAGE_SUCCESS: {
       return state;
     }
     case
