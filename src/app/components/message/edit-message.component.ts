@@ -16,7 +16,6 @@ export class EditMessageComponent {
 
   sendMessage() {
     this.sendMessageService.dispatchMessage(this.msg);
-    // this.store.dispatch(new message.SendMessageAction(new NewMessage(this.msg, this.rid, ddpRandom.id(), new User('asd', 'asd'))));
   }
 
 }

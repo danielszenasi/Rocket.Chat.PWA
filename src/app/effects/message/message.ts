@@ -21,15 +21,6 @@ export class MessageEffects {
   });
 
   @Effect()
-  loadHistory$: Observable<Action> = this.actions$
-    .ofType(message.LOAD_HISTORY)
-    .map((action: message.LoadHistoryAction) => action.payload)
-    .switchMap((loadHistoryDTO: LoadHistoryDTO) => {
-      return this.roomService.loadHistory(loadHistoryDTO)
-        .catch(() => of(new message.LoadHistoryCompleteAction([])));
-    }).mergeMap((messages: Message[]) => from([new message.LoadHistoryCompleteAction(messages), new message.StoreMessageAction(messages)]));
-
-  @Effect()
   load$: Observable<Action> = this.actions$
     .ofType(message.LOAD)
     .startWith(new message.LoadAction())
@@ -42,14 +33,14 @@ export class MessageEffects {
         .catch(error => of(new message.LoadFailAction(error)))
     );
 
-  @Effect()
+  @Effect({dispatch: false})
   storeMessage$: Observable<Action> = this.actions$
     .ofType(message.STORE_MESSAGE)
-    .map((action: message.LoadHistoryCompleteAction) => action.payload)
+    .map((action: message.StoreMessageAction) => action.payload)
     .mergeMap((messages: Message[]) =>
-      this.db.insert('messages', messages)
-        .map(() => new message.StoreMessageSuccessAction(messages))
-        .catch(() => of(new message.StoreMessageFailAction(messages)))
+        this.db.insert('messages', messages)
+      // .map(() => new message.StoreMessageSuccessAction(messages))
+      // .catch(() => of(new message.StoreMessageFailAction(messages)))
     );
 
   @Effect()

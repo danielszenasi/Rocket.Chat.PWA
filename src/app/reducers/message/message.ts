@@ -1,7 +1,6 @@
 import {Message} from '../../models/ddp/message.model';
 import * as message from '../../actions/message/message';
-import {LoadHistoryDTO} from '../../models/dto/load-history-dto.model';
-import {MessageWithId} from '../../models/message-with-id.model';
+import * as room from '../../actions/room/room';
 import {NewMessage} from '../../models/new-message.model';
 
 export interface State {
@@ -29,7 +28,7 @@ export const initialState: State = {
   ids: {}
 };
 
-export function reducer(state = initialState, action: message.Actions): State {
+export function reducer(state = initialState, action: message.Actions | room.Actions): State {
   switch (action.type) {
 
     case message.LOAD: {
@@ -38,65 +37,43 @@ export function reducer(state = initialState, action: message.Actions): State {
       });
     }
 
-    case message.LOAD_HISTORY: {
+    case room.SELECT: {
       // const loadHistoryDTO: LoadHistoryDTO = action.payload;
       return Object.assign({}, state, {
         loading: true,
       });
     }
 
-    case message.LOAD_SUCCESS:
-    case message.LOAD_HISTORY_COMPLETE: {
+    case message.LOAD_SUCCESS: {
       const messages: Message[] = action.payload;
-      console.log(51, "message.ts", messages);
-      const newMessages = messages.filter(message => !state.entities[message._id]);
-      console.log(53, "message.ts", newMessages);
-      const newMessageIds = newMessages.reduceRight((ids: { [rid: string]: string[] }, message: Message) => {
-        const oldMessageIds = state.rids[message.rid] ? state.rids[message.rid] : [];
-        const addedMessageIds = ids[message.rid] ? ids[message.rid] : [];
+      const newState = addMessages(state, messages, true);
+      return newState;
+    }
 
-        return Object.assign(ids, {
-          [message.rid]: [...oldMessageIds, ...addedMessageIds, message._id]
-        });
-      }, {});
-      console.log(58, "message.ts", newMessageIds);
-
-      const newMessageEntities = newMessages.reduce((entities: { [id: string]: Message }, message: Message) => {
-        return Object.assign(entities, {
-          [message._id]: message
-        });
-      }, {});
-
-      const newRoomIds = Object.keys(newMessageIds).filter((rid: string) => !state.rids[rid]);
-
-      return {
-        rids: [...state.rids, ...newRoomIds],
-        ids: Object.assign({}, state.ids, newMessageIds),
-        entities: Object.assign({}, state.entities, newMessageEntities),
-        loading: false,
-        loaded: true,
-        messagesState: state.messagesState
-      };
+    case room.SELECT_COMPLETE: {
+      const messages: Message[] = action.payload;
+      const newState = addMessages(state, messages, false);
+      return newState;
     }
 
     case message.ADD_MESSAGE:
     case message.SEND_MESSAGE: {
       const message: NewMessage = action.payload;
 
-      // TODO check messege room in the entities
-      const storedMessages = Object.assign({}, state.entities[message.rid], {[message._id]: message});
-      const storedMessagIds = [...state.ids[message.rid], message._id];
+      if (!state.entities[message._id]) {
+        const messagesState = Object.assign({}, state.messagesState[message.rid], {[message._id]: MessageState.Sent});
+        return {
+          rids: state.rids,
+          ids: Object.assign({}, state.ids, {[message.rid]: [...state.ids[message.rid], message._id]}),
+          entities: Object.assign({}, state.entities, {[message._id]: message}),
+          loading: false,
+          loaded: true,
+          messagesState: Object.assign({}, state.messagesState, {[message.rid]: messagesState})
+        };
+      } else {
+        return state;
+      }
 
-      const messagesState = Object.assign({}, state.messagesState[message.rid], {[message._id]: MessageState.Sent});
-
-      return {
-        rids: state.rids,
-        ids: Object.assign({}, state.ids, {[message.rid]: storedMessagIds}),
-        entities: Object.assign({}, state.entities, {[message.rid]: storedMessages}),
-        loading: false,
-        loaded: true,
-        messagesState: Object.assign({}, state.messagesState, {[message.rid]: messagesState})
-      };
     }
     case
     message.SEND_MESSAGE_SUCCESS: {
@@ -110,6 +87,50 @@ export function reducer(state = initialState, action: message.Actions): State {
       return state;
     }
   }
+}
+
+function addMessages(state: State, messages: Message[], needSort: boolean): State {
+  const newMessages = messages.filter(message => !state.entities[message._id]);
+
+  if (needSort) {
+    newMessages.sort((a: Message, b: Message) => {
+      const adate = new Date(a.ts);
+      const bdate = new Date(b.ts);
+      if (adate < bdate) {
+        return 1;
+      } else if (adate > bdate) {
+        return -1;
+      }
+      return 0;
+    });
+  }
+
+  // const newMessageIds = newMessages.reverse().map((message: Message) => message._id);
+
+
+  const newMessageIds = newMessages.reduceRight((ids: { [rid: string]: string[] }, message: Message) => {
+    const addedMessageIds = ids[message.rid] ? ids[message.rid] : [];
+    return Object.assign(ids, {
+      [message.rid]: [...addedMessageIds, message._id]
+    });
+  }, {});
+
+  const newMessageEntities = newMessages.reduce((entities: { [id: string]: Message }, message: Message) => {
+    return Object.assign(entities, {
+      [message._id]: message
+    });
+  }, {});
+
+  const newRoomIds = Object.keys(newMessageIds).filter((rid: string) => !state.rids[rid]);
+
+  return {
+    rids: [...state.rids, ...newRoomIds],
+    ids: Object.assign({}, state.ids, newMessageIds),
+    entities: Object.assign({}, state.entities, newMessageEntities),
+    loading: false,
+    loaded: true,
+    messagesState: state.messagesState
+  };
 }
 
 export const getIds = (state: State) => state.ids;

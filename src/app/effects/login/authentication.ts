@@ -2,42 +2,40 @@ import {Injectable} from '@angular/core';
 import {Actions, Effect} from '@ngrx/effects';
 import {Observable} from 'rxjs/Observable';
 import * as login from '../../actions/login/login';
+import * as room from '../../actions/room/room';
 import {Authentication} from '../../services/login/authentication';
+import {from} from 'rxjs/observable/from';
+import {of} from "rxjs/observable/of";
+
 
 @Injectable()
 export class AuthenticationEffects {
 
   @Effect() login$ = this.actions$
-  // Listen for the 'LOGIN' action
     .ofType(login.LOGIN)
     .switchMap(action => this.auth.login(action.payload)
-      // If successful, dispatch success action with result
-        .map((res: any) => new login.LoginSuccessAction(res))
-        // If request fails, dispatch failed action
-        .catch((_error) => Observable.of(new login.LoginFailedAction(_error)))
+      .mergeMap((res: any) => from([new login.LoginSuccessAction(res), new room.GetAction()]))
+      .catch((_error) => Observable.of(new login.LoginFailedAction(_error)))
     );
 
   @Effect() logout$ = this.actions$
-  // Listen for the 'LOGOUT' action
     .ofType(login.LOGOUT)
     .switchMap(action => this.auth.logout()
-      // If successful, dispatch success action with result
         .map((res: any) => ({type: login.LOGOUT_SUCCESS, payload: res}))
     );
 
 
   @Effect() checkAuth$ = this.actions$
-  // Listen for the 'LOGOUT' action
     .ofType(login.CHECK_AUTH)
     .switchMap(action => this.auth.checkAuth()
-      // If successful, dispatch success action with result
         .map((res: any) => {
+      console.log(30, "authentication.ts", res);
           if (res !== null) {
             return {type: login.CHECK_AUTH_SUCCESS, payload: res};
           } else {
             return {type: login.CHECK_AUTH_SUCCESS_NO_USER};
           }
-        })
+        }).catch((err) => of(new login.CheckAuthFailedAction(err)))
     );
 
   constructor(private auth: Authentication,

@@ -44,10 +44,11 @@ export function reducer(state = initialState, action: room.Actions): State {
     }
 
     case room.SELECT: {
+      const roomSubscription = action.payload;
       return {
         ids: state.ids,
         entities: state.entities,
-        selectedRoomId: action.payload,
+        selectedRoomId: roomSubscription.rid,
         loading: state.loading,
         loaded: state.loaded
       };

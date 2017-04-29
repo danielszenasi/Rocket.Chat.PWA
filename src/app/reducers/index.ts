@@ -48,7 +48,9 @@ export const getRoomIds = createSelector(getRoomsState, fromRooms.getIds);
 export const getRoomLoaded = createSelector(getRoomsState, fromRooms.getLoaded);
 export const getRoomLoading = createSelector(getRoomsState, fromRooms.getLoading);
 export const getSelectedRoomId = createSelector(getRoomsState, fromRooms.getSelectedId);
+
 export const getSelectedRoom = createSelector(getRoomsState, fromRooms.getSelected);
+
 export const getRooms = createSelector(getRoomEntities, getRoomIds, (entities, ids) => ids.map(id => entities[id]));
 
 
@@ -64,6 +66,7 @@ export const getMessageIds = createSelector(getMessageState, fromMessage.getIds)
 export const getMessageId = createSelector(getMessageIds, getSelectedRoomId, (ids, id) => ids[id]);
 
 export const getLoadHistoryComplete = createSelector(getMessageEntities, getMessageId, (entities, ids) => {
+  console.log(69, "index.ts", entities, ids);
   if (ids) {
     const res = ids.map(id => entities[id]);
     return res;

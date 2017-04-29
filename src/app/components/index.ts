@@ -12,12 +12,14 @@ import {
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {EditMessageComponent} from './message/edit-message.component';
+import {HomeComponent} from "./room/home.component";
 
 export const COMPONENTS = [
   LoginComponent,
   RoomComponent,
   SidenavComponent,
-  EditMessageComponent
+  EditMessageComponent,
+  HomeComponent
 ];
 
 

@@ -1,11 +1,13 @@
 import {Action} from '@ngrx/store';
 import {RoomSubscription} from '../../models/ddp/room-subscription.model';
+import {Message} from "../../models/ddp/message.model";
 
 
 export const GET = '[Rooms] Get';
 export const GET_COMPLETE = '[Rooms] Get Complete';
 
 export const SELECT = '[Rooms] Select';
+export const SELECT_COMPLETE = '[Rooms] Select Complete';
 
 export const REMOVE_ROOM = '[Rooms] Remove Room';
 export const REMOVE_ROOM_SUCCESS = '[Rooms] Remove Room Success';
@@ -15,6 +17,9 @@ export const LOAD = '[Rooms] Load';
 export const LOAD_SUCCESS = '[Rooms] Load Success';
 export const LOAD_FAIL = '[Rooms] Load Fail';
 
+export const STORE = '[Rooms] Store';
+export const STORE_SUCCESS = '[Rooms] Store Success';
+export const STORE_FAIL = '[Rooms] Store Fail';
 
 export class GetAction implements Action {
   readonly type = GET;
@@ -33,7 +38,14 @@ export class GetCompleteAction implements Action {
 export class SelectAction implements Action {
   readonly type = SELECT;
 
-  constructor(public payload: string) {
+  constructor(public payload: RoomSubscription) {
+  }
+}
+
+export class SelectCompleteAction implements Action {
+  readonly type = SELECT_COMPLETE;
+
+  constructor(public payload: Message[]) {
   }
 }
 
@@ -82,13 +94,38 @@ export class LoadFailAction implements Action {
   }
 }
 
+export class StoreAction implements Action {
+  readonly type = STORE;
+
+  constructor(public payload: RoomSubscription[]) {
+  }
+}
+
+export class StoreSuccessAction implements Action {
+  readonly type = STORE_SUCCESS;
+
+  constructor(public payload: RoomSubscription[]) {
+  }
+}
+
+export class StoreFailAction implements Action {
+  readonly type = STORE_FAIL;
+
+  constructor(public payload: RoomSubscription[]) {
+  }
+}
+
 export type Actions
   = GetAction
   | GetCompleteAction
   | SelectAction
+  | SelectCompleteAction
   | RemoveRoomAction
   | RemoveRoomSuccessAction
   | RemoveRoomFailAction
   | LoadAction
   | LoadSuccessAction
-  | LoadFailAction;
+  | LoadFailAction
+  | StoreAction
+  | StoreSuccessAction
+  | StoreFailAction;

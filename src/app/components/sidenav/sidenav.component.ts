@@ -14,7 +14,6 @@ import * as room from '../../actions/room/room';
   styleUrls: ['./sidenav.component.css']
 })
 export class SidenavComponent {
-  // @Input() user: LoginUser;
   rooms$: Observable<RoomSubscription[]>;
 
   constructor(iconRegistry: MdIconRegistry,
@@ -29,7 +28,7 @@ export class SidenavComponent {
   }
 
   onRoomSelected(selectedRoom: RoomSubscription) {
-    this.store.dispatch(new room.SelectAction(selectedRoom.rid));
+    this.store.dispatch(new room.SelectAction(selectedRoom));
   }
 
 }

@@ -30,6 +30,7 @@ import {DDPService} from './services/ws/ddp.service';
 import {WebSocketService} from './services/ws/websocket.service';
 import {SendMessageService} from "./services/message/send-message.service";
 import {RCCollectionService} from "./services/ws/rc-collection.service";
+import {AuthGuard} from "./services/login/auth-guard.service";
 
 @NgModule({
   declarations: [

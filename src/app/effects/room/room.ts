@@ -14,9 +14,12 @@ import {Injectable} from '@angular/core';
 import {Database} from '@ngrx/db';
 import {defer} from 'rxjs/observable/defer';
 import * as room from '../../actions/room/room';
+import * as message from '../../actions/message/message';
 import {RoomSubscription} from '../../models/ddp/room-subscription.model';
 import {RoomService} from '../../services/room/room.service';
-import * as login from '../../actions/login/login';
+import {from} from 'rxjs/observable/from';
+import {Message} from '../../models/ddp/message.model';
+import {go} from '@ngrx/router-store';
 
 
 @Injectable()
@@ -28,17 +31,17 @@ export class RoomEffects {
   });
 
   @Effect()
-  search$: Observable<Action> = this.actions$
-    .ofType(login.LOGIN_SUCCESS)
+  get$: Observable<Action> = this.actions$
+    .ofType(room.GET)
     .map(toPayload)
     .switchMap(() => {
       return this.roomService.getSubscription()
-        .map((rooms: RoomSubscription[]) => new room.GetCompleteAction(rooms))
+        .mergeMap((rooms: RoomSubscription[]) => from([new room.GetCompleteAction(rooms), new room.StoreAction(rooms)]))
         .catch(() => of(new room.GetCompleteAction([])));
     });
 
   @Effect()
-  loadCollection$: Observable<Action> = this.actions$
+  loadRoomFromCollection$: Observable<Action> = this.actions$
     .ofType(room.LOAD)
     .startWith(new room.LoadAction())
     .switchMap(() =>
@@ -49,13 +52,13 @@ export class RoomEffects {
     );
 
   @Effect()
-  addRoomToCollection$: Observable<Action> = this.actions$
-    .ofType(room.GET_COMPLETE)
-    .map((action: room.GetCompleteAction) => action.payload)
+  storeRoomToCollection$: Observable<Action> = this.actions$
+    .ofType(room.STORE)
+    .map((action: room.StoreAction) => action.payload)
     .mergeMap((rooms: RoomSubscription[]) =>
       this.db.insert('rooms', rooms)
-        .map(() => new room.LoadSuccessAction(rooms))
-        .catch(() => of(new room.LoadFailAction(rooms)))
+        .map((room) => new room.StoreSuccessAction(room))
+        .catch(() => of(new room.StoreFailAction(rooms)))
     );
 
 
@@ -68,6 +71,19 @@ export class RoomEffects {
         .map(() => new room.RemoveRoomSuccessAction(roomSub))
         .catch(() => of(new room.RemoveRoomFailAction(roomSub)))
     );
+
+  @Effect()
+  select$: Observable<Action> = this.actions$
+    .ofType(room.SELECT)
+    .map((action: room.SelectAction) => action.payload)
+    .switchMap((roomSubscription: RoomSubscription) => {
+      return this.roomService.roomSelected(roomSubscription)
+        .mergeMap((messages: Message[]) =>
+          from([new room.SelectCompleteAction(messages),
+            new message.StoreMessageAction(messages),
+            go(`/channel/${roomSubscription.name}`)]))
+        .catch(() => of(new room.SelectCompleteAction([])));
+    });
 
   constructor(private actions$: Actions, private db: Database, private roomService: RoomService) {
   }

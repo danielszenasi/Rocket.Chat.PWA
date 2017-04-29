@@ -24,7 +24,7 @@ export class LoginAction implements Action {
 export class LogoutAction implements Action {
   readonly type = LOGOUT;
 
-  constructor(public payload: string) {
+  constructor() {
   }
 }
 
@@ -45,7 +45,7 @@ export class LoginFailedAction implements Action {
 export class CheckAuthAction implements Action {
   readonly type = CHECK_AUTH;
 
-  constructor(public payload: any) {
+  constructor() {
   }
 }
 

@@ -1,4 +1,7 @@
 import {Component} from '@angular/core';
+import {Store} from '@ngrx/store';
+import * as login from '../app/actions/login/login';
+import * as fromRoot from '../app/reducers';
 
 
 @Component({
@@ -9,7 +12,10 @@ import {Component} from '@angular/core';
 export class AppComponent {
   isDarkTheme = false;
 
-  constructor() {
+  constructor(private store: Store<fromRoot.State>) {
   }
 
+  onLogout() {
+    this.store.dispatch(new login.LogoutAction());
+  }
 }

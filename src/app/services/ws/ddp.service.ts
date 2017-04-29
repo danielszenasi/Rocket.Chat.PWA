@@ -2,14 +2,20 @@ import {Subject} from 'rxjs/Subject';
 import {WebSocketService} from './websocket.service';
 import {DDPClientSettings} from '../../models/DDPClientSettings';
 import {DDPResponse} from '../../models/ddp-response.model';
-import {Observer} from 'rxjs/Observer';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {RCCollectionService} from "./rc-collection.service";
+import {RCCollectionService} from './rc-collection.service';
+import * as login from '../../actions/login/login';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '../../reducers';
 
 // TODO add types
 @Injectable()
 export class DDPService {
+
+  protected isConnecting: boolean;
+  protected isConnected: boolean;
+  protected isClosed: boolean;
 
   protected session: string;
 
@@ -28,9 +34,18 @@ export class DDPService {
 
   constructor(private wsService: WebSocketService,
               ddpSettings: DDPClientSettings,
-              private rcCollectionService: RCCollectionService) {
+              private rcCollectionService: RCCollectionService,
+              private store: Store<fromRoot.State>) {
+    this.isConnecting = false;
+    this.isConnected = false;
+    this.isClosed = false;
     this.nextId = 0;
     this.subjects = {};
+
+    this.reconnectStatus = {
+      attempt: 0,
+      nextDelay: 0,
+    };
 
     this.ddpSubject = <Subject<DDPResponse>>wsService.connect(this.createUrlFromSettings(ddpSettings), () => {
       this.ddpSubject.next({
@@ -41,26 +56,22 @@ export class DDPService {
     });
 
     this.ddpSubject.subscribe((data: DDPResponse) => {
+      console.log(44, 'ddp.service.ts', data);
       this.message(data);
     }, () => {
       this.onError();
     }, () => {
       this.onClose();
     });
-
-    this.reconnectStatus = {
-      attempt: 0,
-      nextDelay: 0,
-    };
   }
 
   onError() {
-    console.log(55, "ddp.service.ts", 'error');
+    console.log(55, 'ddp.service.ts', 'error');
     // TODO handle error
   }
 
   onClose() {
-    console.log(60, "ddp.service.ts", 'close');
+    console.log(60, 'ddp.service.ts', 'close');
     // TODO handle close
   }
 
@@ -80,7 +91,7 @@ export class DDPService {
   }
 
   send(msg: string, id?: number) {
-    console.log(84, "ddp.service.ts", msg, id);
+    console.log(84, 'ddp.service.ts', msg, id);
     const data = id ? {msg: msg, id: id.toString()} : {msg: msg};
     this.ddpSubject.next(data);
   }
@@ -117,11 +128,12 @@ export class DDPService {
       case 'failed':
         break;
       case 'connected':
+        this.session = data.session;
+        this.connected();
         break;
 
       // method result
       case 'result':
-        console.log(121, "ddp.service.ts", data);
         subject = this.subjects[data.id];
 
         if (subject) {
@@ -147,7 +159,6 @@ export class DDPService {
 
 
       case 'ping':
-        console.log(138, "ddp.service.ts", data.id);
         this.send('pong');
         break;
       // server respond to my ping
@@ -172,13 +183,41 @@ export class DDPService {
       // case 'removed':
 
       case 'changed':
-        console.log(171, "ddp.service.ts", data);
         this.rcCollectionService.changed(data);
         break;
       default:
         console.warn('DDP cannot handle this message', data);
         break;
     }
+  }
+
+  // handle DDP connected (ddp msg received from Server)
+  private connected() {
+
+    this.isConnecting = false;
+    this.isConnected = true;
+    this.isClosed = false;
+
+    this.reconnectStatus = {
+      attempt: 0,
+      nextDelay: 0,
+    };
+
+    if (this.pingInterval) {
+      clearInterval(this.pingInterval);
+    }
+
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+    }
+
+    this.store.dispatch(new login.CheckAuthAction());
+
+    // this.pingInterval = setInterval(
+    //   () => this.ping(),
+    //   this.ddpSettings.pingInterval) as any;
+
+    // this.onConnected();
   }
 
   private createUrlFromSettings(ddpSettings: DDPClientSettings) {

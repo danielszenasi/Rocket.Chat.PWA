@@ -7,9 +7,6 @@ export const LOAD = '[Message] Load ';
 export const LOAD_SUCCESS = '[Message] Load  Success';
 export const LOAD_FAIL = '[Message] Load  Fail';
 
-export const LOAD_HISTORY = '[Message] Load history';
-export const LOAD_HISTORY_COMPLETE = '[Message] Load history Complete';
-
 export const SEND_MESSAGE = '[Message] Send Message';
 export const SEND_MESSAGE_SUCCESS = '[Message] Send Message Success';
 export const SEND_MESSAGE_FAIL = '[Message] Send Message Fail';
@@ -40,21 +37,6 @@ export class LoadFailAction implements Action {
   constructor(public payload: any) {
   }
 }
-
-export class LoadHistoryAction implements Action {
-  readonly type = LOAD_HISTORY;
-
-  constructor(public payload: LoadHistoryDTO) {
-  }
-}
-
-export class LoadHistoryCompleteAction implements Action {
-  readonly type = LOAD_HISTORY_COMPLETE;
-
-  constructor(public payload: Message[]) {
-  }
-}
-
 
 export class SendMessageAction implements Action {
   readonly type = SEND_MESSAGE;
@@ -109,8 +91,6 @@ export type Actions
   = LoadAction
   | LoadSuccessAction
   | LoadFailAction
-  | LoadHistoryAction
-  | LoadHistoryCompleteAction
   | SendMessageAction
   | SendMessageSuccessAction
   | SendMessageFailAction

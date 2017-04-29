@@ -15,28 +15,18 @@ export class Authentication {
     return this.ddp.call('login', [cred]);
   }
 
-
   logout() {
-    return new Observable(observer => {
-      setTimeout(() => {
-        window.localStorage.removeItem('AUTH_TOKEN');
-
-        return observer.next({});
-      }, 2000);
-    });
+    window.localStorage.removeItem('AUTH_TOKEN');
+    return this.ddp.call('logout', []);
   }
 
   checkAuth() {
-    return new Observable(observer => {
-      setTimeout(() => {
-        const token = window.localStorage.getItem('AUTH_TOKEN');
-        if (token) {
-          return observer.next(JSON.parse(token));
-        } else {
-          return observer.next(null);
-        }
-      }, 1000);
-    });
+    const token = window.localStorage.getItem('AUTH_TOKEN');
+    return this.ddp.call('login', [{resume: token}]);
+  }
+
+  hasToken(): string {
+    return window.localStorage.getItem('AUTH_TOKEN');
   }
 
 }

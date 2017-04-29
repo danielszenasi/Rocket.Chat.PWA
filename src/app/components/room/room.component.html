@@ -2,7 +2,7 @@
 <md-list fxFlex="90">
     <h3 md-subheader>Messages</h3>
     <md-list-item *ngFor="let message of messages$ | async">
-      <h4 md-line>{{message.u.username}}</h4>
+      <h4 md-line>{{message.u.username}} - {{message.ts | date:'medium'}}</h4>
       <p md-line> {{message.msg}} </p>
     </md-list-item>
   </md-list>

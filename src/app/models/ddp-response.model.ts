@@ -3,6 +3,7 @@
  */
 export class DDPResponse {
   constructor(public msg: string,
+              public session?: string,
               public id?: string,
               public method?: string,
               public params?: any[],

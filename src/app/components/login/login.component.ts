@@ -17,15 +17,14 @@ export class LoginComponent {
 
   model = new LoginUser('', '');
 
-  constructor(private store: Store<fromRoot.State>,
-              private router: Router) {
+  constructor(private store: Store<fromRoot.State>) {
     // this.models = null;
 
     const dispose = store.select(fromRoot.getLoginSuccess).subscribe(
       (user: LoginUser) => {
         if (user) {
           dispose.unsubscribe();
-          this.router.navigate(['/room']);
+          // this.router.navigate(['/room']);
         }
 
         // this.handleProgressDialog(currentState);

@@ -18,16 +18,9 @@ export class RoomComponent {
   messages$: Observable<Message[]>;
 
   constructor(private store: Store<fromRoot.State>) {
-    store.select(fromRoot.getSelectedRoom).subscribe(room => {
-      if (room) {
-        this.loadHistory(room);
-      }
+    this.messages$ = store.select(fromRoot.getLoadHistoryComplete);
+    this.messages$.subscribe(asd => {
+      console.log(22, 'room.component.ts', asd);
     });
-   this.messages$ = store.select(fromRoot.getLoadHistoryComplete);
   }
-
-  loadHistory(room: RoomSubscription) {
-    this.store.dispatch(new message.LoadHistoryAction(new LoadHistoryDTO(room.rid, 50, new DateDTO(room.ls))));
-  }
-
 }
