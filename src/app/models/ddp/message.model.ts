@@ -1,17 +1,25 @@
 import {User} from './user.model';
 
+export enum SyncState {
+  NOT_SYNCED,
+  SYNCING,
+  SYNCED,
+  FAILED
+}
+
 export class Message {
-  constructor(public _id: string,
-              public t: string,
+  constructor(public msg: string,
+              public _id: string,
               public rid: string,
-              // public syncstate: number,
-              public ts: number,
-              public msg: string,
               public u: User,
+              public ts: string, // Date
+              public syncstate: SyncState,
               public groupable: boolean,
-              public alias: string,
-              public avatar: string,
-              public attachments: string,
-              public urls: string) {
+              public _updatedAt?: string, // Date
+              public t?: string,
+              public alias?: string,
+              public avatar?: string,
+              public attachments?: string,
+              public urls?: string) {
   }
 }

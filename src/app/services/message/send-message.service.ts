@@ -8,6 +8,7 @@ import {ddpRandom} from '../../helpers/ddp-random';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '../../reducers';
 import * as message from '../../actions/message/message';
+import {Message, SyncState} from "../../models/ddp/message.model";
 
 @Injectable()
 export class SendMessageService {
@@ -25,6 +26,7 @@ export class SendMessageService {
   }
 
   dispatchMessage(msg: string) {
-    this.store.dispatch(new message.SendMessageAction(new NewMessage(msg, this.rid, ddpRandom.id(), this.user)));
+    this.store.dispatch(new message.SendMessageAction(
+      new Message(msg, ddpRandom.id(), this.rid, this.user, new Date().toJSON(), SyncState.NOT_SYNCED, false)));
   }
 }

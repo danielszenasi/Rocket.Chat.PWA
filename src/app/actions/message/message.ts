@@ -41,7 +41,7 @@ export class LoadFailAction implements Action {
 export class SendMessageAction implements Action {
   readonly type = SEND_MESSAGE;
 
-  constructor(public payload: NewMessage) {
+  constructor(public payload: Message) {
   }
 }
 

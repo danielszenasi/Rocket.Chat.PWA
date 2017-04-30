@@ -15,12 +15,18 @@ import * as room from '../../actions/room/room';
 })
 export class SidenavComponent {
   rooms$: Observable<RoomSubscription[]>;
+  userId: string;
 
   constructor(iconRegistry: MdIconRegistry,
               sanitizer: DomSanitizer,
               private store: Store<fromRoot.State>) {
 
     this.rooms$ = store.select(fromRoot.getRooms);
+    store.select(fromRoot.getLoginSuccess).subscribe((user: any) => {
+      if (user) {
+        this.userId = user.id;
+      }
+    });
     // To avoid XSS attacks, the URL needs to be trusted from inside of your application.
     // const avatarsSafeUrl = sanitizer.bypassSecurityTrustResourceUrl('./assets/avatars.svg');
 

@@ -59,7 +59,7 @@ export const getLoginState = (state: State) => state.login;
 export const getLoginSuccess = createSelector(getLoginState, fromLogin.getLoginSucces);
 
 export const getMessageState = (state: State) => state.message;
-export const getMessageEntities = createSelector(getMessageState, fromMessage.getEntites);
+export const getMessageEntities = createSelector(getMessageState, fromMessage.getEntities);
 export const getMessageIds = createSelector(getMessageState, fromMessage.getIds);
 
 // export const getMessages = createSelector(getMessageEntities, getSelectedRoomId, (entities, id) => entities[id]);

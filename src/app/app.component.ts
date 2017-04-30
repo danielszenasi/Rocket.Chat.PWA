@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {Store} from '@ngrx/store';
-import * as login from '../app/actions/login/login';
-import * as fromRoot from '../app/reducers';
+import * as login from './actions/login/login';
+import * as fromRoot from './reducers';
 
 
 @Component({

@@ -1,4 +1,4 @@
-<md-tab-group>
+<md-tab-group *ngIf="userId">
   <md-tab label="Users">
     <md-nav-list>
       <md-list-item *ngFor="let room of rooms$ | async"
