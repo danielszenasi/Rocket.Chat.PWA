@@ -1,14 +1,14 @@
 {
   "static": {
     "urls": {
-      "https://danielszenasi.github.io/Rocket.Chat.PWA/polyfills.d56fd7f506154f5049ec.bundle.js": "29cec8eb54be7df2f9e3897804fbffe69d1ca7a9",
-      "https://danielszenasi.github.io/Rocket.Chat.PWA/main.82e6a56817facfd4b3bc.bundle.js": "7be2f32d1493d6f3f35ef7486add55abf2302fd7",
+      "https://danielszenasi.github.io/Rocket.Chat.PWA/polyfills.275be326d4ffe4b40bc9.bundle.js": "5598e2c308d50af53e989c5b775e02e313dbdc50",
+      "https://danielszenasi.github.io/Rocket.Chat.PWA/main.c135fd404af75c54c004.bundle.js": "518b33eae3d0c0fd6d0d6a2188218bc3b6a6641b",
       "https://danielszenasi.github.io/Rocket.Chat.PWA/sw-register.b73048fe3d9f8a1e7ae5.bundle.js": "a98270c864fc34e37b1d992bfe5994323558c2f8",
-      "https://danielszenasi.github.io/Rocket.Chat.PWA/vendor.17aa0d90a34a795e9eec.bundle.js": "f52202ca0bbfcf6cfc51f8c968d885bc286f0331",
-      "https://danielszenasi.github.io/Rocket.Chat.PWA/inline.0c59a41f2a1980a7b899.bundle.js": "ccd9811de44f70032c99b5a9181243e1a51974b0",
+      "https://danielszenasi.github.io/Rocket.Chat.PWA/vendor.fe51664068ed4375d9ff.bundle.js": "d0feaed7939b62890d1ad51b1c180799d36d9a6a",
+      "https://danielszenasi.github.io/Rocket.Chat.PWA/inline.188209f16a432d03fb9f.bundle.js": "157d8e301daac2534b1069cd81d3c9e8f4c7fd56",
       "https://danielszenasi.github.io/Rocket.Chat.PWA/styles.8091a8674138626a2941.bundle.css": "03fcff02591a65ccd37e0a179c738f684f26bf41",
       "https://danielszenasi.github.io/Rocket.Chat.PWA/favicon.ico": "84161b857f5c547e3699ddfbffc6d8d737542e01",
-      "https://danielszenasi.github.io/Rocket.Chat.PWA/index.html": "58cbf3ff35888d937ad26dc10d36075fb5f4db39"
+      "https://danielszenasi.github.io/Rocket.Chat.PWA/index.html": "f4d2cf3be38f622686e5b22bb0b8bccb5471dd92"
     },
     "_generatedFromWebpack": true
   }
