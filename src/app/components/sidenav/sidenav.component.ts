@@ -7,6 +7,7 @@ import {Observable} from 'rxjs/Observable';
 import {Store} from '@ngrx/store';
 import * as fromRoot from '../../reducers';
 import * as room from '../../actions/room/room';
+import {go} from "@ngrx/router-store";
 
 @Component({
   selector: 'app-sidenav',
@@ -34,7 +35,8 @@ export class SidenavComponent {
   }
 
   onRoomSelected(selectedRoom: RoomSubscription) {
-    this.store.dispatch(new room.SelectAction(selectedRoom));
+    this.store.dispatch(go([`/channel/${selectedRoom.name}`]));
+    this.store.dispatch(new room.SelectAction(selectedRoom)); // TODO replace to room.component
   }
 
 }

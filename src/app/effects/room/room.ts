@@ -80,8 +80,7 @@ export class RoomEffects {
       return this.roomService.roomSelected(roomSubscription)
         .mergeMap((messages: Message[]) =>
           from([new room.SelectCompleteAction(messages),
-            new message.StoreMessageAction(messages),
-            go(`/channel/${roomSubscription.name}`)]))
+            new message.StoreMessageAction(messages)]))
         .catch(() => of(new room.SelectCompleteAction([])));
     });
 
