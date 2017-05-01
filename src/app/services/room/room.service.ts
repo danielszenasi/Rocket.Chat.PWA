@@ -1,44 +1,101 @@
 import {Injectable} from '@angular/core';
-import {LoadHistoryDTO} from '../../models/dto/load-history-dto.model';
 import {DDPService} from '../ws/ddp.service';
-import {NewMessage} from "../../models/new-message.model";
-import {RoomSubscription} from "../../models/ddp/room-subscription.model";
-import {DateDTO} from "../../models/dto/date-dto.model";
+import {NewMessage} from '../../models/new-message.model';
+import {DateDTO} from '../../models/dto/date-dto.model';
+import {Store} from '@ngrx/store';
+import * as fromRoot from '../../reducers';
+import * as room from '../../actions/room/room';
+import {RoomSubscription} from '../../models/ddp/room-subscription.model';
+import {Observable} from 'rxjs/Observable';
+import {of} from "rxjs/observable/of";
+import {Subject} from "rxjs/Subject";
 
 @Injectable()
 export class RoomService {
 
-  private subscribedRoomId: string;
+  private subscribedRoomIds: string[] = [];
+  private rooms: { [name: string]: RoomSubscription };
+  private selectedRoomName: string;
 
-  constructor(private ddp: DDPService) {
+  private loaded = false;
+  private loadedSubject: Subject<boolean>;
+
+  constructor(private ddp: DDPService,
+              private store: Store<fromRoot.State>) {
+
+    this.loadedSubject = new Subject();
+
+    store.select(fromRoot.getRoomEntities).subscribe((rooms: { [name: string]: RoomSubscription }) => {
+      if (!this.isEmpty(rooms)) {
+        console.log(30, "room.service.ts", rooms);
+        this.rooms = rooms;
+        this.loaded = true;
+        this.loadedSubject.next(true);
+        this.loadedSubject.complete();
+      }
+    });
+    // TODO need a user
+    setTimeout(() => {
+      this.roomSelected('general').subscribe(data => {
+        console.log(39, "room.service.ts", data);
+      });
+    }, 1000);
+
   }
 
   getSubscription() {
     return this.ddp.call('subscriptions/get', []);
   }
 
-  roomSelected(room: RoomSubscription) {
-
-    if (this.subscribedRoomId) {
-      // TODO unsubscribe
+  roomSelected(name: string): Observable<any> {
+    if (this.loaded) {
+      console.log(42, "room.service.ts", this.loaded);
+      return this.getRoomSelected(name);
+    } else {
+      return this.loadedSubject.switchMap((loaded) => {
+        console.log(45, "room.service.ts", loaded);
+        return this.getRoomSelected(name);
+      });
     }
 
-    this.ddp.subscribe('stream-room-messages', [
-      room.rid,
-      false
-    ]);
+  }
 
+  getRoomSelected(name: string) {
+    this.selectedRoomName = name;
+    console.log(55, "room.service.ts", this.rooms);
+    if (!this.rooms[name]) {
+      return; // TODO new error
+    }
+    const room = this.rooms[name];
 
-    return this.ddp.call('loadHistory', [
-      room.rid,
-      null,
-      50,
-      new DateDTO(room.ls)
-    ]).map((data: any) => data.messages);
+    if (!this.subscribedRoomIds.includes(room.rid)) {
+      this.subscribedRoomIds = [...this.subscribedRoomIds, room.rid];
+      this.ddp.subscribe('stream-room-messages', [
+        room.rid,
+        false
+      ]);
+      return this.ddp.call('loadHistory', [
+        room.rid,
+        null,
+        50,
+        new DateDTO(room.ls)
+      ]).map((data: any) => data.messages);
+    }
+
+    return of([]);
   }
 
   sendMessage(newMessage: NewMessage) {
     return this.ddp.call('sendMessage', [newMessage])
       .map((data: any) => data.messages);
+  }
+
+  isEmpty(obj) {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        return false;
+      }
+    }
+    return true;
   }
 }

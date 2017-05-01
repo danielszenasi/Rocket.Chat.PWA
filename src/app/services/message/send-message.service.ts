@@ -9,6 +9,7 @@ import {Store} from '@ngrx/store';
 import * as fromRoot from '../../reducers';
 import * as message from '../../actions/message/message';
 import {Message, SyncState} from "../../models/ddp/message.model";
+import {RoomSubscription} from "../../models/ddp/room-subscription.model";
 
 @Injectable()
 export class SendMessageService {
@@ -17,8 +18,8 @@ export class SendMessageService {
   private user: User;
 
   constructor(private store: Store<fromRoot.State>) {
-    store.select(fromRoot.getSelectedRoomId).subscribe((id) => {
-      this.rid = id;
+    store.select(fromRoot.getSelectedRoom).subscribe((room: RoomSubscription) => {
+      this.rid = room.rid;
     });
     // store.select(fromRoot.getUser).subscribe((user: User) => {
     this.user = new User('id', 'me');

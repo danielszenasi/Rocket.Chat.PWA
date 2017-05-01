@@ -41,6 +41,9 @@ export function reducer(state = initialState, action: message.Actions | room.Act
 
     case room.SELECT_COMPLETE: {
       const messages: Message[] = action.payload;
+      if(!messages.length) {
+        return state;
+      }
       const newState = addMessages(state, messages, false);
       return newState;
     }

@@ -38,7 +38,7 @@ export class GetCompleteAction implements Action {
 export class SelectAction implements Action {
   readonly type = SELECT;
 
-  constructor(public payload: RoomSubscription) {
+  constructor(public payload: string) {
   }
 }
 

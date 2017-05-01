@@ -29,7 +29,6 @@ export class AuthenticationEffects {
     .ofType(login.CHECK_AUTH)
     .switchMap(action => this.auth.checkAuth()
         .map((res: any) => {
-      console.log(30, "authentication.ts", res);
           if (res !== null) {
             return {type: login.CHECK_AUTH_SUCCESS, payload: res};
           } else {

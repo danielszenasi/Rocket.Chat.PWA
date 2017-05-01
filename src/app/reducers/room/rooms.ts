@@ -5,8 +5,8 @@ import {RoomSubscription} from '../../models/ddp/room-subscription.model';
 
 export interface State {
   ids: string[];
-  entities: { [id: string]: RoomSubscription };
-  selectedRoomId: string | null;
+  entities: { [name: string]: RoomSubscription };
+  selectedRoomName: string | null;
   loaded: boolean;
   loading: boolean;
 }
@@ -15,7 +15,7 @@ export interface State {
 export const initialState: State = {
   ids: [],
   entities: {},
-  selectedRoomId: null,
+  selectedRoomName: null,
   loaded: false,
   loading: false,
 };
@@ -26,29 +26,29 @@ export function reducer(state = initialState, action: room.Actions): State {
     case room.GET_COMPLETE:
     case room.LOAD_SUCCESS: {
       const rooms = action.payload;
-      const newRooms = rooms.filter(room => !state.entities[room.rid]);
-      const newRoomIds = newRooms.map(room => room.rid);
-      const newRoomEntities = newRooms.reduce((entities: { [id: string]: RoomSubscription }, room: RoomSubscription) => {
+      const newRooms = rooms.filter(room => !state.entities[room.name]);
+      const newRoomIds = newRooms.map(room => room.name);
+      const newRoomEntities = newRooms.reduce((entities: { [name: string]: RoomSubscription }, room: RoomSubscription) => {
         return Object.assign(entities, {
-          [room.rid]: room
+          [room.name]: room
         });
       }, {});
 
       return {
         ids: [...state.ids, ...newRoomIds],
         entities: Object.assign({}, state.entities, newRoomEntities),
-        selectedRoomId: state.selectedRoomId,
+        selectedRoomName: state.selectedRoomName,
         loading: false,
         loaded: true
       };
     }
 
     case room.SELECT: {
-      const roomSubscription = action.payload;
+      const name = action.payload;
       return {
         ids: state.ids,
         entities: state.entities,
-        selectedRoomId: roomSubscription.rid,
+        selectedRoomName: name,
         loading: state.loading,
         loaded: state.loaded
       };
@@ -63,12 +63,12 @@ export function reducer(state = initialState, action: room.Actions): State {
     case room.REMOVE_ROOM_FAIL: {
       const roomSubscription = action.payload;
 
-      if (state.ids.indexOf(roomSubscription.rid) > -1) {
+      if (state.ids.indexOf(roomSubscription.name) > -1) {
         return state;
       }
 
       return Object.assign({}, state, {
-        ids: [...state.ids, roomSubscription.rid]
+        ids: [...state.ids, roomSubscription.name]
       });
     }
 
@@ -76,7 +76,7 @@ export function reducer(state = initialState, action: room.Actions): State {
       const roomSubscription = action.payload;
 
       return Object.assign({}, state, {
-        ids: state.ids.filter(id => id !== roomSubscription.rid)
+        ids: state.ids.filter(id => id !== roomSubscription.name)
       });
     }
 
@@ -91,7 +91,7 @@ export const getEntities = (state: State) => state.entities;
 
 export const getIds = (state: State) => state.ids;
 
-export const getSelectedId = (state: State) => state.selectedRoomId;
+export const getSelectedId = (state: State) => state.selectedRoomName;
 
 export const getLoaded = (state: State) => state.loaded;
 

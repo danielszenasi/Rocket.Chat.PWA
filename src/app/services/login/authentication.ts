@@ -8,7 +8,6 @@ import {DDPResponse} from '../../models/ddp-response.model';
 export class Authentication {
 
   constructor(private ddp: DDPService) {
-    console.log('Hello Authentication Provider');
   }
 
   login(cred: any): Observable<DDPResponse> {

@@ -1,12 +1,10 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import * as message from '../../actions/message/message';
 import * as fromRoot from '../../reducers';
-import {RoomSubscription} from '../../models/ddp/room-subscription.model';
-import {LoadHistoryDTO} from '../../models/dto/load-history-dto.model';
-import {DateDTO} from '../../models/dto/date-dto.model';
 import {Observable} from 'rxjs/Observable';
-import {Message} from "../../models/ddp/message.model";
+import {Message} from '../../models/ddp/message.model';
+import {ActivatedRoute} from '@angular/router';
+import * as room from '../../actions/room/room';
 
 @Component({
   selector: 'app-room',
@@ -16,11 +14,16 @@ import {Message} from "../../models/ddp/message.model";
 })
 export class RoomComponent {
   messages$: Observable<Message[]>;
+  private sub: any;
 
-  constructor(private store: Store<fromRoot.State>) {
+  constructor(private store: Store<fromRoot.State>,
+              private route: ActivatedRoute) {
     this.messages$ = store.select(fromRoot.getLoadHistoryComplete);
-    this.messages$.subscribe(asd => {
-      console.log(22, 'room.component.ts', asd);
+
+    this.route.params.subscribe(params => {
+      const name: string = params['name'];
+      this.store.dispatch(new room.SelectAction(name));
     });
   }
+
 }

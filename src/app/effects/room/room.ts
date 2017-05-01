@@ -76,11 +76,10 @@ export class RoomEffects {
   select$: Observable<Action> = this.actions$
     .ofType(room.SELECT)
     .map((action: room.SelectAction) => action.payload)
-    .switchMap((roomSubscription: RoomSubscription) => {
-      return this.roomService.roomSelected(roomSubscription)
+    .switchMap((name: string) => {
+      return this.roomService.roomSelected(name)
         .mergeMap((messages: Message[]) =>
-          from([new room.SelectCompleteAction(messages),
-            new message.StoreMessageAction(messages)]))
+          from([new room.SelectCompleteAction(messages)]))
         .catch(() => of(new room.SelectCompleteAction([])));
     });
 

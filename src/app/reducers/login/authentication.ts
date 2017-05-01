@@ -31,7 +31,6 @@ export function reducer(state = initialState, action: login.Actions): State {
 
 
     case login.LOGIN: {
-      console.log(34, "authentication.ts", action.payload);
       return {
         inProgress: true,
         isLoggedIn: false,
@@ -48,7 +47,6 @@ export function reducer(state = initialState, action: login.Actions): State {
     case login.CHECK_AUTH_SUCCESS:
       state = Object.assign({}, state, {tokenCheckComplete: true});
     case login.LOGIN_SUCCESS: {
-      console.log(44, "authentication.ts", action.payload);
       window.localStorage.setItem('AUTH_TOKEN', action.payload.token);
       return Object.assign({}, state, {inProgress: false, user: action.payload, isLoggedIn: true});
     }
