@@ -18,8 +18,11 @@ export class SendMessageService {
   private user: User;
 
   constructor(private store: Store<fromRoot.State>) {
+
     store.select(fromRoot.getSelectedRoom).subscribe((room: RoomSubscription) => {
-      this.rid = room.rid;
+      if (room) {
+        this.rid = room.rid;
+      }
     });
     // store.select(fromRoot.getUser).subscribe((user: User) => {
     this.user = new User('id', 'me');

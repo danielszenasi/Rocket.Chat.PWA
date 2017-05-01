@@ -63,7 +63,7 @@ export const getMessageEntities = createSelector(getMessageState, fromMessage.ge
 export const getMessageIds = createSelector(getMessageState, fromMessage.getIds);
 
 // export const getMessages = createSelector(getMessageEntities, getSelectedRoomId, (entities, id) => entities[id]);
-export const getMessageId = createSelector(getMessageIds, getSelectedRoom, (ids, room) => ids[room.rid]);
+export const getMessageId = createSelector(getMessageIds, getSelectedRoom, (ids, room) => room ? ids[room.rid] : null);
 
 export const getLoadHistoryComplete = createSelector(getMessageEntities, getMessageId, (entities, ids) => {
   if (ids) {

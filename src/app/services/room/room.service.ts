@@ -27,19 +27,12 @@ export class RoomService {
 
     store.select(fromRoot.getRoomEntities).subscribe((rooms: { [name: string]: RoomSubscription }) => {
       if (!this.isEmpty(rooms)) {
-        console.log(30, "room.service.ts", rooms);
         this.rooms = rooms;
         this.loaded = true;
         this.loadedSubject.next(true);
         this.loadedSubject.complete();
       }
     });
-    // TODO need a user
-    setTimeout(() => {
-      this.roomSelected('general').subscribe(data => {
-        console.log(39, "room.service.ts", data);
-      });
-    }, 1000);
 
   }
 
@@ -49,11 +42,9 @@ export class RoomService {
 
   roomSelected(name: string): Observable<any> {
     if (this.loaded) {
-      console.log(42, "room.service.ts", this.loaded);
       return this.getRoomSelected(name);
     } else {
       return this.loadedSubject.switchMap((loaded) => {
-        console.log(45, "room.service.ts", loaded);
         return this.getRoomSelected(name);
       });
     }
@@ -62,13 +53,12 @@ export class RoomService {
 
   getRoomSelected(name: string) {
     this.selectedRoomName = name;
-    console.log(55, "room.service.ts", this.rooms);
     if (!this.rooms[name]) {
       return; // TODO new error
     }
     const room = this.rooms[name];
 
-    if (!this.subscribedRoomIds.includes(room.rid)) {
+    if (room && !this.subscribedRoomIds.includes(room.rid)) {
       this.subscribedRoomIds = [...this.subscribedRoomIds, room.rid];
       this.ddp.subscribe('stream-room-messages', [
         room.rid,
