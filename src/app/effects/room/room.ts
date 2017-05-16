@@ -20,6 +20,7 @@ import {RoomService} from '../../services/room/room.service';
 import {from} from 'rxjs/observable/from';
 import {Message} from '../../models/ddp/message.model';
 import {go} from '@ngrx/router-store';
+import {MessagesWithRoomName} from "../../models/dto/messages-with-rid.model";
 
 
 @Injectable()
@@ -79,8 +80,8 @@ export class RoomEffects {
     .switchMap((name: string) => {
       return this.roomService.roomSelected(name)
         .mergeMap((messages: Message[]) =>
-          from([new room.SelectCompleteAction(messages)]))
-        .catch(() => of(new room.SelectCompleteAction([])));
+          from([new room.SelectCompleteAction(new MessagesWithRoomName(name, messages))]))
+        .catch(() => of()); // of(new room.SelectFailAction(name)));
     });
 
   constructor(private actions$: Actions, private db: Database, private roomService: RoomService) {

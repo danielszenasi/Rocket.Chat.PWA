@@ -12,9 +12,9 @@ export const schema: DBSchema = {
       autoIncrement: true,
       primaryKey: 'rid'
     },
-    messages: {
+    messagesWithRid: {
       autoIncrement: true,
-      primaryKey: '_id'
+      primaryKey: 'rid'
     }
   }
 };

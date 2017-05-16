@@ -1,6 +1,7 @@
 import {Action} from '@ngrx/store';
 import {RoomSubscription} from '../../models/ddp/room-subscription.model';
 import {Message} from "../../models/ddp/message.model";
+import {MessagesWithRoomName} from "../../models/dto/messages-with-rid.model";
 
 
 export const GET = '[Rooms] Get';
@@ -45,7 +46,7 @@ export class SelectAction implements Action {
 export class SelectCompleteAction implements Action {
   readonly type = SELECT_COMPLETE;
 
-  constructor(public payload: Message[]) {
+  constructor(public payload: MessagesWithRoomName) {
   }
 }
 

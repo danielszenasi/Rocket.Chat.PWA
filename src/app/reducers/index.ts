@@ -9,7 +9,6 @@ import {combineReducers} from '@ngrx/store';
 import * as fromLogin from './login/authentication';
 import * as fromRooms from './room/rooms';
 import * as fromMessage from './message/message';
-import {Message} from "../models/ddp/message.model";
 // import * as fromLayout from './layout';
 
 
@@ -62,15 +61,10 @@ export const getMessageState = (state: State) => state.message;
 export const getMessageEntities = createSelector(getMessageState, fromMessage.getEntities);
 export const getMessageIds = createSelector(getMessageState, fromMessage.getIds);
 
-// export const getMessages = createSelector(getMessageEntities, getSelectedRoomId, (entities, id) => entities[id]);
-export const getMessageId = createSelector(getMessageIds, getSelectedRoom, (ids, room) => room ? ids[room.rid] : null);
 
-export const getLoadHistoryComplete = createSelector(getMessageEntities, getMessageId, (entities, ids) => {
-  if (ids) {
-    const res = ids.map(id => entities[id]);
-    return res;
-  }
-  return [];
+export const getLoadHistoryComplete = createSelector(getMessageEntities, getSelectedRoom, (entities, room) => {
+  console.log(66, "index.ts", entities, room);
+  return entities[room.name];
 });
 
 

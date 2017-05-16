@@ -2,6 +2,7 @@ import {LoadHistoryDTO} from '../../models/dto/load-history-dto.model';
 import {Action} from '@ngrx/store';
 import {NewMessage} from '../../models/new-message.model';
 import {Message} from '../../models/ddp/message.model';
+import {MessagesWithRoomName} from "../../models/dto/messages-with-rid.model";
 
 export const LOAD = '[Message] Load ';
 export const LOAD_SUCCESS = '[Message] Load  Success';
@@ -27,7 +28,7 @@ export class LoadAction implements Action {
 export class LoadSuccessAction implements Action {
   readonly type = LOAD_SUCCESS;
 
-  constructor(public payload: Message[]) {
+  constructor(public payload: MessagesWithRoomName[]) {
   }
 }
 
@@ -69,21 +70,21 @@ export class AddMessageAction implements Action {
 export class StoreMessageAction implements Action {
   readonly type = STORE_MESSAGE;
 
-  constructor(public payload: Message[]) {
+  constructor(public payload: MessagesWithRoomName[]) {
   }
 }
 
 export class StoreMessageSuccessAction implements Action {
   readonly type = STORE_MESSAGE_SUCCESS;
 
-  constructor(public payload: Message[]) {
+  constructor(public payload: MessagesWithRoomName[]) {
   }
 }
 
 export class StoreMessageFailAction implements Action {
   readonly type = STORE_MESSAGE_FAIL;
 
-  constructor(public payload: Message[]) {
+  constructor(public payload: MessagesWithRoomName[]) {
   }
 }
 

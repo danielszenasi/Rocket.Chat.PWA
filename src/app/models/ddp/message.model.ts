@@ -20,6 +20,7 @@ export class Message {
               public alias?: string,
               public avatar?: string,
               public attachments?: string,
-              public urls?: string) {
+              public urls?: string,
+              public sameDay?: boolean) {
   }
 }

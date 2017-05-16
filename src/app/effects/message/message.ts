@@ -11,6 +11,7 @@ import {RoomService} from '../../services/room/room.service';
 import {defer} from 'rxjs/observable/defer';
 import {Database} from '@ngrx/db';
 import {NewMessage} from '../../models/new-message.model';
+import {MessagesWithRoomName} from "../../models/dto/messages-with-rid.model";
 
 @Injectable()
 export class MessageEffects {
@@ -27,8 +28,8 @@ export class MessageEffects {
     .switchMap(() =>
       this.db.query('messages')
         .toArray()
-        .map((messages) => {
-          return new message.LoadSuccessAction(messages);
+        .map((messagesWithRid) => {
+          return new message.LoadSuccessAction(messagesWithRid);
         })
         .catch(error => of(new message.LoadFailAction(error)))
     );
@@ -37,8 +38,8 @@ export class MessageEffects {
   storeMessage$: Observable<Action> = this.actions$
     .ofType(message.STORE_MESSAGE)
     .map((action: message.StoreMessageAction) => action.payload)
-    .mergeMap((messages: Message[]) =>
-        this.db.insert('messages', messages)
+    .mergeMap((messagesWithRid: MessagesWithRoomName[]) =>
+        this.db.insert('messages', messagesWithRid)
       // .map(() => new message.StoreMessageSuccessAction(messages))
       // .catch(() => of(new message.StoreMessageFailAction(messages)))
     );
